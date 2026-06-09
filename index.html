@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>POS Retail Pro | GST Billing + AdSense Ready</title>
+    <title>POS Retail Pro | Admin Approval Billing System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Google AdSense Script (REPLACE ca-pub-XXXXXXXX with your actual publisher ID) -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-        crossorigin="anonymous"></script>
-    
     <style>
         :root {
             --primary: #10b981;
@@ -26,36 +21,22 @@
             --radius-lg: 16px;
             --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
         }
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
-        body { background: var(--bg-main); color: var(--text-main); padding: 30px 20px; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        
-        /* Ad Container Styles */
-        .ad-container {
-            text-align: center;
-            margin: 16px 0;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px dashed #cbd5e1;
-            min-height: 100px;
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: var(--bg-main);
+            color: var(--text-main);
+            padding: 30px 20px;
+            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
-        .ad-label {
-            font-size: 10px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-        .sidebar-ad {
-            background: #f1f5f9;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-        
+
         /* Auth Modal Styles */
         .auth-overlay {
             position: fixed;
@@ -72,668 +53,1727 @@
         }
         .auth-card {
             background: white;
-            max-width: 460px;
+            max-width: 480px;
             width: 90%;
             padding: 36px 32px;
             border-radius: 32px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(16, 185, 129, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        .auth-icon { font-size: 52px; background: #ecfdf5; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; border-radius: 60px; margin: 0 auto 16px; color: var(--primary); }
-        .auth-card h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; text-align: center; }
-        .auth-card p { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 28px; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { font-size: 13px; font-weight: 600; color: var(--text-main); display: block; margin-bottom: 6px; }
-        .input-group input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-md); font-size: 15px; outline: none; transition: 0.2s; }
-        .input-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
-        .auth-btn { background: var(--primary); color: white; font-weight: 700; padding: 13px; width: 100%; border: none; border-radius: var(--radius-md); font-size: 16px; cursor: pointer; transition: 0.2s; margin-top: 8px; }
-        .auth-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        .toggle-auth { margin-top: 20px; font-size: 14px; color: var(--primary); cursor: pointer; text-align: center; font-weight: 600; }
-        .forgot-link { text-align: right; font-size: 12px; margin-top: -8px; margin-bottom: 12px; cursor: pointer; color: var(--primary); display: inline-block; width: 100%; text-align: right; }
-        .error-msg { background: #fef2f2; color: #ef4444; padding: 10px 14px; border-radius: 40px; font-size: 13px; margin-top: 12px; text-align: center; }
-        .success-msg { background: #dcfce7; color: #15803d; padding: 10px 14px; border-radius: 40px; font-size: 13px; margin-top: 12px; text-align: center; }
-        .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
-        .checkbox-row input { width: 18px; height: 18px; cursor: pointer; }
-        
-        /* Main POS App Layout with Sidebar for Ads */
-        .pos-app-wrapper { width: 100%; max-width: 1400px; margin: 0 auto; display: none; flex-direction: column; gap: 24px; }
-        .main-dashboard { display: flex; gap: 24px; flex-wrap: wrap; }
-        .pos-main-content { flex: 3; min-width: 280px; }
-        .ads-sidebar { flex: 1; min-width: 260px; position: sticky; top: 20px; align-self: flex-start; }
-        
-        .pos-container { background: var(--surface); padding: 32px; border-radius: var(--radius-lg); box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .shop-header-wrapper { display: flex; align-items: center; gap: 24px; padding-bottom: 24px; border-bottom: 2px dashed var(--border); margin-bottom: 24px; flex-wrap: wrap; }
-        .logo-upload-zone { width: 90px; height: 90px; background: #f0fdf4; border: 2px dashed var(--primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; }
-        .logo-upload-zone img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
-        .upload-icon { font-size: 24px; color: var(--primary); text-align: center; }
-        .shop-details-pane { flex: 1; min-width: 200px; }
-        .shop-details-pane input { width: 100%; border: none; outline: none; background: transparent; margin-bottom: 5px; }
-        .shop-details-pane input.shop-name { font-size: 26px; font-weight: 800; color: var(--text-main); }
-        .shop-details-pane input.shop-info { font-size: 13px; color: var(--text-muted); }
-        .bill-meta { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-        .meta-card { background: #f8fafc; border: 1px solid var(--border); padding: 12px 16px; border-radius: var(--radius-md); flex: 1; }
-        .meta-card label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; }
-        .meta-card input, .meta-card select { font-size: 14px; font-weight: 600; background: transparent; border: none; outline: none; width: 100%; margin-top: 4px; }
-        .table-wrapper { border: 1px solid var(--border); border-radius: var(--radius-md); overflow-x: auto; margin-bottom: 20px; }
-        .invoice-table { width: 100%; border-collapse: collapse; min-width: 500px; }
-        .invoice-table th { background: #f8fafc; font-size: 12px; font-weight: 700; padding: 14px 12px; text-align: left; border-bottom: 1px solid var(--border); }
-        .invoice-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
-        .invoice-table input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; outline: none; }
-        .invoice-table input:focus { border-color: var(--primary); }
-        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; font-size: 14px; font-weight: 600; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        .btn-secondary { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border); }
-        .btn-danger { background: #fee2e2; color: #ef4444; padding: 6px 12px; }
-        .btn-success { background: #2563eb; color: white; }
-        .billing-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; background: #f8fafc; padding: 24px; border-radius: var(--radius-md); margin-top: 24px; }
-        .calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .calc-row input { width: 140px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); text-align: right; }
-        .change-display { font-size: 22px; font-weight: 800; color: #ef4444; }
-        .change-display.clear { color: var(--primary); }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .grand-total-row { font-size: 24px; font-weight: 800; border-top: 2px solid var(--text-main); padding-top: 12px; margin-top: 8px; }
-        .global-actions { margin-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .report-card { background: var(--surface); padding: 28px; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-top: 24px; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; }
-        .badge-paid { background: #dcfce7; color: #15803d; }
-        .badge-draft { background: #f1f5f9; color: #475569; }
-        .badge-pending { background: #fef3c7; color: #b45309; }
-        .logout-bar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 12px 24px; border-radius: 60px; box-shadow: var(--shadow); margin-bottom: 8px; }
-        .user-greeting { background: #ecfdf5; padding: 6px 18px; border-radius: 40px; font-weight: 600; color: #047857; font-size: 14px; }
-        .info-card { background: white; border-radius: var(--radius-md); border: 1px solid var(--border); overflow: hidden; margin-top: 24px; }
-        .accordion-header { padding: 16px 24px; background: #f8fafc; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; }
-        .accordion-content { padding: 20px 24px; display: none; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media print { .auth-overlay, .logout-bar, .btn, .global-actions, .info-card, .report-card .btn, .ads-sidebar, .ad-container { display: none !important; } }
-        @media (max-width: 900px) { .main-dashboard { flex-direction: column; } .ads-sidebar { position: static; } .billing-dashboard { grid-template-columns: 1fr; } .pos-container { padding: 20px; } }
-        
-        /* Horizontal ad unit styling */
-        .top-ad-banner {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 16px;
-            padding: 8px;
-            margin-bottom: 20px;
+        .auth-icon {
+            font-size: 52px;
+            background: #ecfdf5;
+            width: 85px;
+            height: 85px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 60px;
+            margin: 0 auto 16px;
+            color: var(--primary);
+        }
+        .auth-card h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
             text-align: center;
+        }
+        .auth-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        .auth-btn {
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            padding: 13px;
+            width: 100%;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 8px;
+        }
+        .auth-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .toggle-auth {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--primary);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+        }
+        .forgot-link {
+            text-align: right;
+            font-size: 12px;
+            margin-top: -8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            color: var(--primary);
+            display: inline-block;
+            width: 100%;
+            text-align: right;
+        }
+        .error-msg {
+            background: #fef2f2;
+            color: #ef4444;
+            padding: 10px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            margin-top: 12px;
+            text-align: center;
+        }
+        .success-msg {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 10px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            margin-top: 12px;
+            text-align: center;
+        }
+        .warning-msg {
+            background: #fffbeb;
+            color: #b45309;
+            padding: 10px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            margin-top: 12px;
+            text-align: center;
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .checkbox-row input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            margin-top: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .admin-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 16px 24px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .pending-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .approve-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 4px;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .approve-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        .reject-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 4px;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+        .reject-btn:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+        .user-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        .user-row:hover {
+            background: #f8fafc;
+        }
+        .user-info strong {
+            display: block;
+            font-size: 15px;
+            color: var(--text-main);
+        }
+        .user-info small {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        .status-approved {
+            color: #10b981;
+            font-weight: 600;
+            background: #dcfce7;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
+        .status-pending {
+            color: #f59e0b;
+            font-weight: 600;
+            background: #fef3c7;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
+        .notification-banner {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        /* Main POS Layout */
+        .pos-app-wrapper {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .main-dashboard {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .pos-main-content {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .pos-container {
+            background: var(--surface);
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        .shop-header-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding-bottom: 24px;
+            border-bottom: 2px dashed var(--border);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .logo-upload-zone {
+            width: 90px;
+            height: 90px;
+            background: #f0fdf4;
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .logo-upload-zone img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+        .upload-icon {
+            font-size: 24px;
+            color: var(--primary);
+            text-align: center;
+        }
+        .shop-details-pane {
+            flex: 1;
+            min-width: 200px;
+        }
+        .shop-details-pane input {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            margin-bottom: 5px;
+        }
+        .shop-details-pane input.shop-name {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .shop-details-pane input.shop-info {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .bill-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .meta-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            flex: 1;
+        }
+        .meta-card label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: block;
+        }
+        .meta-card input,
+        .meta-card select {
+            font-size: 14px;
+            font-weight: 600;
+            background: transparent;
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .gst-manual-section {
+            background: #f0fdf4;
+            border: 1px solid #c6f6d5;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        .gst-heading {
+            font-size: 14px;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .gst-input-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        .gst-field {
+            flex: 1;
+            min-width: 140px;
+        }
+        .gst-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #047857;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .gst-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #c6f6d5;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            background: white;
+            outline: none;
+        }
+        .apply-gst-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .table-wrapper {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+        .invoice-table th {
+            background: #f8fafc;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .invoice-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .invoice-table input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            outline: none;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-danger {
+            background: #fee2e2;
+            color: #ef4444;
+            padding: 6px 12px;
+        }
+        .btn-success {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-amber {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn-amber:hover {
+            background: #d97706;
+        }
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        .btn-outline:hover {
+            background: #ecfdf5;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .billing-summary-simple {
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            margin-top: 24px;
+        }
+        .summary-block {
+            max-width: 400px;
+            margin-left: auto;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .grand-total-row {
+            font-size: 28px;
+            font-weight: 800;
+            border-top: 2px solid var(--text-main);
+            padding-top: 16px;
+            margin-top: 12px;
+            color: var(--primary);
+        }
+        .global-actions {
+            margin-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .report-card {
+            background: var(--surface);
+            padding: 28px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            margin-top: 24px;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-paid {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        .badge-draft {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+        .badge-pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+        .logout-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 12px 24px;
+            border-radius: 60px;
+            box-shadow: var(--shadow);
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .user-greeting {
+            background: #ecfdf5;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #047857;
+            font-size: 14px;
+        }
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+        .filter-row label {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .filter-row select {
+            padding: 8px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            cursor: pointer;
+            outline: none;
+        }
+        .filter-row select:focus {
+            border-color: var(--primary);
+        }
+        .total-summary-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: 18px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .total-summary-card .total-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #065f46;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .total-summary-card .total-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: #059669;
+        }
+        .total-summary-card .invoice-count {
+            font-size: 13px;
+            color: #047857;
+            font-weight: 500;
+        }
+        .import-export-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 8px 0;
+        }
+        .cross-device-note {
+            font-size: 11px;
+            color: #64748b;
+            background: #fffbeb;
+            padding: 8px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid #fde68a;
+        }
+        @media print {
+            .auth-overlay,
+            .logout-bar,
+            .btn,
+            .global-actions,
+            .admin-panel,
+            .notification-banner,
+            .filter-row,
+            .total-summary-card,
+            .import-export-row,
+            .cross-device-note,
+            .apply-gst-btn {
+                display: none !important;
+            }
+        }
+        @media (max-width: 700px) {
+            .pos-container {
+                padding: 20px;
+            }
+            .gst-input-row {
+                flex-direction: column;
+            }
+            .total-summary-card .total-amount {
+                font-size: 24px;
+            }
+            .logout-bar {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- AUTHENTICATION MODAL -->
-<div id="authOverlay" class="auth-overlay">
-    <div class="auth-card" id="authCard"></div>
-</div>
+    <!-- AUTHENTICATION MODAL -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card" id="authCard"></div>
+    </div>
 
-<!-- MAIN APP -->
-<div id="appWrapper" class="pos-app-wrapper">
-    <div class="logout-bar">
-        <div class="user-greeting" id="userGreeting">👤 Welcome</div>
-        <div style="display: flex; gap: 12px;">
-            <button class="btn btn-secondary" style="padding: 6px 18px;" onclick="toggleAdDemo()" id="adToggleBtn">📢 Hide Demo Ads</button>
-            <button class="btn btn-secondary" style="padding: 6px 18px;" onclick="logoutUser()">🚪 Sign Out</button>
-        </div>
-    </div>
-    
-    <!-- Top Banner Ad Space (Premium placement) -->
-    <div class="top-ad-banner" id="topAdBanner">
-        <div class="ad-label">ADVERTISEMENT</div>
-        <!-- Google AdSense Ad Unit - Replace data-ad-slot with your own -->
-        <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-            data-ad-slot="1234567890"
-            data-ad-format="auto"
-            data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        <!-- Demo fallback content (removed when real ads serve) -->
-        <div id="demoAdFallback" style="background:#e2e8f0; border-radius:12px; padding:20px; margin:5px; font-size:12px; color:#64748b;">
-            📢 [Demo Ad Space] - Replace with your Google AdSense code<br>
-            Your advertisement could appear here
-        </div>
-    </div>
-    
-    <div class="main-dashboard">
-        <!-- Main POS Content -->
-        <div class="pos-main-content">
-            <div class="pos-container" id="printable-pos">
-                <div class="shop-header-wrapper">
-                    <div class="logo-upload-zone" onclick="triggerLogoUpload()">
-                        <div id="logoPlaceholder"><div class="upload-icon">📷</div><div style="font-size:10px;">Logo</div></div>
-                        <img id="storeLogoPreview" alt="Logo">
-                    </div>
-                    <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="loadLogo(event)">
-                    <div class="shop-details-pane">
-                        <input type="text" class="shop-name" id="shopName" placeholder="YOUR STORE NAME">
-                        <input type="text" class="shop-info" id="shopAddress" placeholder="Address, City, State - ZIP">
-                        <input type="text" class="shop-info" id="shopContact" placeholder="Phone | GSTIN">
-                    </div>
-                </div>
-                
-                <div class="bill-meta">
-                    <div class="meta-card"><label>Invoice #</label><input type="text" id="invoiceId" readonly></div>
-                    <div class="meta-card"><label>Date</label><input type="date" id="invoiceDate"></div>
-                    <div class="meta-card"><label>Status</label><select id="invoiceStatus"><option>Paid</option><option>Draft</option><option>Pending</option></select></div>
-                </div>
-                
-                <div class="table-wrapper">
-                    <table class="invoice-table">
-                        <thead><tr><th>Product / Service</th><th style="width:100px;">Qty</th><th style="width:120px;">Rate (₹)</th><th style="width:120px;">Amount</th><th style="width:50px;"></th></tr></thead>
-                        <tbody id="itemsTableBody">
-                            <tr><td><input type="text" placeholder="Item description" class="item-desc"></td>
-                                <td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td>
-                                <td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td>
-                                <td class="item-amount" style="font-weight:600;">0.00</td>
-                                <td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <button class="btn btn-secondary" onclick="addRow()">+ Add Item</button>
-                    <button class="btn btn-secondary" onclick="newInvoiceToken()">🔄 New Token</button>
-                </div>
-                
-                <div class="billing-dashboard">
-                    <div class="cash-calculator">
-                        <h3 style="margin-bottom:16px; font-size:14px;">💰 Cash Counter</h3>
-                        <div class="calc-row"><label>Cash Tendered:</label><input type="number" id="cashTendered" oninput="calcChange()" placeholder="0"></div>
-                        <div class="calc-row"><label>Balance Due:</label><div id="changeDue" class="change-display">₹0.00</div></div>
-                    </div>
-                    <div class="summary-block">
-                        <div class="summary-row"><span>Subtotal</span><span id="subtotalVal">₹0.00</span></div>
-                        <div class="summary-row"><span>CGST (2.5%)</span><span id="cgstVal">₹0.00</span></div>
-                        <div class="summary-row"><span>SGST (2.5%)</span><span id="sgstVal">₹0.00</span></div>
-                        <div class="summary-row grand-total-row"><span>Grand Total</span><span id="grandTotalVal">₹0.00</span></div>
-                    </div>
-                </div>
-                
-                <div class="global-actions">
-                    <span style="color:var(--text-muted); font-size:12px;">GST Billing Engine</span>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn btn-success" onclick="saveCurrentInvoice()">💾 Save Invoice</button>
-                        <button class="btn btn-secondary" onclick="shareBill()">📤 Share</button>
-                        <button class="btn btn-primary" onclick="printInvoice()">🖨️ Print / PDF</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="report-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap;">
-                    <h2 style="font-size:18px;">📋 Invoice Ledger</h2>
-                    <button class="btn btn-danger" style="padding:6px 14px;" onclick="clearAllInvoices()">⚠️ Delete All</button>
-                </div>
-                <div class="table-wrapper">
-                    <table class="invoice-table">
-                        <thead><tr><th>Invoice #</th><th>Date</th><th>Store Name</th><th>Status</th><th style="text-align:right;">Total</th><th style="text-align:center;">Actions</th></tr></thead>
-                        <tbody id="reportTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <div class="accordion-header" onclick="toggleInfo()">
-                    <span>📖 User Guide & Support</span>
-                    <span id="infoArrow">▼</span>
-                </div>
-                <div class="accordion-content" id="infoContent">
-                    <div>
-                        <h4 style="margin-bottom:12px;">✨ Features</h4>
-                        <ul style="list-style:none;">
-                            <li>✓ <strong>Individual Accounts</strong> - Register/Login with email</li>
-                            <li>✓ <strong>Forgot Password</strong> - Simulated reset via recovery email</li>
-                            <li>✓ <strong>Store Logo Upload</strong> - Customize your brand</li>
-                            <li>✓ <strong>GST Billing</strong> - Auto CGST+SGST (5% total)</li>
-                            <li>✓ <strong>Edit/Delete</strong> past invoices from ledger</li>
-                            <li>✓ <strong>Cash Counter</strong> - Auto change calculation</li>
-                        </ul>
-                    </div>
-                    <div style="background:#f0fdf4; padding:16px; border-radius:12px;">
-                        <h4 style="margin-bottom:8px;">📞 Support Desk</h4>
-                        <p>Email: anilsouth65@gmail.com</p>
-                        <p>Phone: +91 9514391536</p>
-                        <p style="margin-top:12px; font-size:12px;">Demo accounts can be created instantly</p>
-                    </div>
-                </div>
+    <!-- MAIN APP -->
+    <div id="appWrapper" class="pos-app-wrapper">
+        <div class="logout-bar">
+            <div class="user-greeting" id="userGreeting">👤 Welcome</div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <span class="cross-device-note" title="Export your account data to use on another device">📱 Cross-device: Use Export/Import below</span>
+                <button class="btn btn-outline btn-sm" id="exportAccountBtn" onclick="exportFullAccountData()" title="Export all your data for use on another device or mobile">📦 Export My Data</button>
+                <button class="btn btn-outline btn-sm" id="importAccountBtn" onclick="triggerImportAccountData()" title="Import previously exported data from another device">📥 Import Data</button>
+                <input type="file" id="importAccountFileInput" accept=".json" style="display:none" onchange="importFullAccountData(event)">
+                <button class="btn btn-secondary btn-sm" id="adminPanelBtn" onclick="toggleAdminPanel()" style="display:none;">👑 Admin Panel</button>
+                <button class="btn btn-secondary btn-sm" onclick="logoutUser()">🚪 Sign Out</button>
             </div>
         </div>
-        
-        <!-- Right Sidebar for Ads (Premium placement) -->
-        <div class="ads-sidebar" id="adsSidebar">
-            <div class="sidebar-ad">
-                <div class="ad-label">SPONSORED</div>
-                <!-- Vertical/Sidebar Ad Unit -->
-                <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                    data-ad-slot="9876543210"
-                    data-ad-format="rectangle"
-                    data-full-width-responsive="true"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                <div id="demoSidebarAd" style="background:#e2e8f0; border-radius:12px; padding:30px 20px; margin-top:8px; text-align:center; color:#64748b; font-size:12px;">
-                    📢 [Sidebar Ad Space]<br>
-                    Replace with AdSense code
-                </div>
-            </div>
-            
-            <div class="sidebar-ad">
-                <div class="ad-label">RECOMMENDED</div>
-                <!-- Second sidebar ad unit -->
-                <ins class="adsbygoogle"
-                    style="display:block"
-                    data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-                    data-ad-slot="1122334455"
-                    data-ad-format="rectangle"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                <div id="demoSidebarAd2" style="background:#e2e8f0; border-radius:12px; padding:20px; margin-top:8px; text-align:center; color:#64748b; font-size:12px;">
-                    💼 Affiliate Offer<br>
-                    Billing Hardware Solutions
-                </div>
-            </div>
-            
-            <!-- Affiliate marketing link area (AdSense compliant alternative) -->
-            <div class="sidebar-ad" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;">
-                <div style="font-weight:700; margin-bottom:8px;">🚀 Upgrade to Premium POS</div>
-                <div style="font-size:12px; margin-bottom:12px;">Multi-user • Cloud Backup • Advanced Reports</div>
-                <a href="#" style="background:white; color:#667eea; padding:8px 16px; border-radius:40px; text-decoration:none; font-weight:600; display:inline-block;">Learn More →</a>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    // ---------- USER MANAGEMENT & POS SYSTEM (Fully Functional) ----------
-    let currentUser = null;
-    let showAds = true;
-    
-    function getUsers() { return JSON.parse(localStorage.getItem('pos_users')) || []; }
-    function saveUsers(users) { localStorage.setItem('pos_users', JSON.stringify(users)); }
-    function getUserInvoices() { return JSON.parse(localStorage.getItem(`pos_invoices_${currentUser?.id}`)) || []; }
-    function saveUserInvoices(invoices) { localStorage.setItem(`pos_invoices_${currentUser?.id}`, JSON.stringify(invoices)); }
-    
-    let authMode = 'login';
-    
-    function renderAuth() {
-        const container = document.getElementById('authCard');
-        if (authMode === 'login') {
-            container.innerHTML = `
+        <!-- Admin Approval Panel (visible only to admin) -->
+        <div id="adminPanelContainer" style="display: none;"></div>
+
+        <div class="main-dashboard">
+            <div class="pos-main-content">
+                <div class="pos-container" id="printable-pos">
+                    <div class="shop-header-wrapper">
+                        <div class="logo-upload-zone" onclick="triggerLogoUpload()">
+                            <div id="logoPlaceholder">
+                                <div class="upload-icon">📷</div>
+                                <div style="font-size:10px;">Logo</div>
+                            </div>
+                            <img id="storeLogoPreview" alt="Logo">
+                        </div>
+                        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="loadLogo(event)">
+                        <div class="shop-details-pane">
+                            <input type="text" class="shop-name" id="shopName" placeholder="YOUR STORE NAME">
+                            <input type="text" class="shop-info" id="shopAddress" placeholder="Address, City, State - ZIP">
+                            <input type="text" class="shop-info" id="shopContact" placeholder="Phone | GSTIN">
+                        </div>
+                    </div>
+
+                    <div class="bill-meta">
+                        <div class="meta-card"><label>Invoice #</label><input type="text" id="invoiceId" readonly></div>
+                        <div class="meta-card"><label>Date</label><input type="date" id="invoiceDate"></div>
+                        <div class="meta-card"><label>Status</label><select id="invoiceStatus"><option>Paid</option><option>Draft</option><option>Pending</option></select></div>
+                    </div>
+
+                    <div class="gst-manual-section">
+                        <div class="gst-heading"><span>⚙️</span> MANUAL GST CALCULATION</div>
+                        <div class="gst-input-row">
+                            <div class="gst-field"><label>CGST (%)</label><input type="number" id="cgstPercent" step="any" placeholder="e.g., 2.5" value="2.5"></div>
+                            <div class="gst-field"><label>SGST (%)</label><input type="number" id="sgstPercent" step="any" placeholder="e.g., 2.5" value="2.5"></div>
+                            <div class="gst-field"><label>Additional Cess (%)</label><input type="number" id="cessPercent" step="any" placeholder="Optional" value="0"></div>
+                            <button class="apply-gst-btn" onclick="calculateTotal()">⟳ Recalculate GST</button>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr><th>Product / Service</th><th style="width:100px;">Qty</th><th style="width:120px;">Rate (₹)</th><th style="width:120px;">Amount</th><th style="width:50px;"></th></tr>
+                            </thead>
+                            <tbody id="itemsTableBody">
+                                <tr>
+                                    <td><input type="text" placeholder="Item description" class="item-desc"></td>
+                                    <td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td>
+                                    <td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td>
+                                    <td class="item-amount" style="font-weight:600;">0.00</td>
+                                    <td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="display:flex; gap:10px; margin-bottom:20px;">
+                        <button class="btn btn-secondary" onclick="addRow()">+ Add Item</button>
+                        <button class="btn btn-secondary" onclick="newInvoiceToken()">🔄 New Token</button>
+                    </div>
+
+                    <div class="billing-summary-simple">
+                        <div class="summary-block">
+                            <div class="summary-row"><span>Subtotal</span><span id="subtotalVal">₹0.00</span></div>
+                            <div class="summary-row"><span>CGST (<span id="cgstPercentDisplay">2.5</span>%)</span><span id="cgstVal">₹0.00</span></div>
+                            <div class="summary-row"><span>SGST (<span id="sgstPercentDisplay">2.5</span>%)</span><span id="sgstVal">₹0.00</span></div>
+                            <div class="summary-row" id="cessRow" style="display: none;"><span>Cess (<span id="cessPercentDisplay">0</span>%)</span><span id="cessVal">₹0.00</span></div>
+                            <div class="summary-row grand-total-row"><span>Grand Total</span><span id="grandTotalVal">₹0.00</span></div>
+                        </div>
+                    </div>
+
+                    <div class="global-actions">
+                        <span style="color:var(--text-muted); font-size:12px;">Admin Approval System | Admin: ANIV6536</span>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <button class="btn btn-success" onclick="saveCurrentInvoice()">💾 Save Invoice</button>
+                            <button class="btn btn-secondary" onclick="shareBill()">📤 Share</button>
+                            <button class="btn btn-primary" onclick="printInvoice()">🖨️ Print / PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 📋 INVOICE LEDGER WITH FILTER & TOTAL -->
+                <div class="report-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                        <h2 style="font-size:18px; margin:0;">📋 Invoice Ledger</h2>
+                        <div class="import-export-row">
+                            <button class="btn btn-outline btn-sm" onclick="exportInvoicesToJSON()" title="Export invoices as JSON file">📤 Export Invoices</button>
+                            <button class="btn btn-outline btn-sm" onclick="triggerImportInvoices()" title="Import invoices from JSON file">📥 Import Invoices</button>
+                            <input type="file" id="importInvoicesFileInput" accept=".json" style="display:none" onchange="importInvoicesFromJSON(event)">
+                        </div>
+                    </div>
+
+                    <!-- 🔍 Month/Year Filter -->
+                    <div class="filter-row">
+                        <label>🔍 Filter:</label>
+                        <select id="filterMonth" onchange="applyInvoiceFilter()">
+                            <option value="all">All Months</option>
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <select id="filterYear" onchange="applyInvoiceFilter()">
+                            <option value="all">All Years</option>
+                        </select>
+                        <button class="btn btn-secondary btn-sm" onclick="resetInvoiceFilter()">🔄 Reset Filter</button>
+                        <span style="font-size:12px; color:var(--text-muted); margin-left:auto;" id="filteredCountLabel">Showing all invoices</span>
+                    </div>
+
+                    <!-- 💰 Total Amount Summary -->
+                    <div class="total-summary-card" id="totalSummaryCard">
+                        <div>
+                            <div class="total-label">💰 Total Invoice Amount</div>
+                            <div class="invoice-count" id="totalInvoiceCount">0 invoices</div>
+                        </div>
+                        <div class="total-amount" id="totalFilteredAmount">₹0.00</div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="invoice-table">
+                            <thead>
+                                <tr><th>Invoice #</th><th>Date</th><th>Store Name</th><th>Status</th><th style="text-align:right;">Total</th><th style="text-align:center;">Actions</th></tr>
+                            </thead>
+                            <tbody id="reportTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================== USER MANAGEMENT WITH APPROVAL ========================
+        let currentUser = null;
+        let currentFilterMonth = 'all';
+        let currentFilterYear = 'all';
+
+        // ADMIN CREDENTIALS as specified: username ANIV6536, password ANIV6536
+        const ADMIN_USERNAME = "ANIV6536";
+        const ADMIN_PASSWORD = "ANIV6536";
+        const ADMIN_EMAIL = "anilsouth65@gmail.com";
+
+        function getUsers() { return JSON.parse(localStorage.getItem('pos_users_approved')) || []; }
+
+        function saveUsers(users) { localStorage.setItem('pos_users_approved', JSON.stringify(users)); }
+
+        function getUserInvoices() { return JSON.parse(localStorage.getItem(`pos_invoices_${currentUser?.id}`)) || []; }
+
+        function saveUserInvoices(invoices) { localStorage.setItem(`pos_invoices_${currentUser?.id}`,
+                JSON.stringify(invoices)); }
+
+        // Initialize default admin account if not exists
+        function initAdminAccount() {
+            let users = getUsers();
+            const adminExists = users.find(u => u.username === ADMIN_USERNAME || u.email === ADMIN_EMAIL);
+            if (!adminExists) {
+                users.push({
+                    id: "admin_001",
+                    name: "Admin",
+                    username: ADMIN_USERNAME,
+                    password: ADMIN_PASSWORD,
+                    email: ADMIN_EMAIL,
+                    status: 'approved',
+                    isAdmin: true,
+                    createdAt: new Date().toISOString()
+                });
+                saveUsers(users);
+            }
+        }
+
+        // Store pending requests and notify admin via in-app notification
+        function notifyAdmin(newUserName, newUserEmail, userId, userUsername) {
+            let pendingRequests = JSON.parse(localStorage.getItem('admin_pending_requests')) || [];
+            if (!pendingRequests.find(r => r.userId === userId)) {
+                pendingRequests.push({
+                    userId,
+                    name: newUserName,
+                    email: newUserEmail,
+                    username: userUsername,
+                    status: 'pending',
+                    requestedAt: Date.now()
+                });
+                localStorage.setItem('admin_pending_requests', JSON.stringify(pendingRequests));
+            }
+            console.log(`New registration request from ${newUserName} (${newUserEmail})`);
+
+            if (currentUser && currentUser.isAdmin) {
+                renderAdminPanel();
+                showInAppNotification(`📢 New registration request from ${newUserName}!`);
+            }
+        }
+
+        function showInAppNotification(message) {
+            const container = document.getElementById('adminPanelContainer');
+            if (container) {
+                const notifDiv = document.createElement('div');
+                notifDiv.className = 'notification-banner blink';
+                notifDiv.innerHTML =
+                    `🔔 ${message} <button style="margin-left:auto; background:none; border:none; cursor:pointer;" onclick="this.parentElement.remove()">✕</button>`;
+                container.insertBefore(notifDiv, container.firstChild);
+                setTimeout(() => { if (notifDiv) notifDiv.remove(); }, 8000);
+            } else {
+                alert(`🔔 ${message}`);
+            }
+        }
+
+        let authMode = 'login';
+
+        function renderAuth() {
+            const container = document.getElementById('authCard');
+            if (authMode === 'login') {
+                container.innerHTML = `
                 <div class="auth-icon">🔐</div>
                 <h2>Welcome Back</h2>
                 <p>Sign in to your POS dashboard</p>
-                <div class="input-group"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"></div>
+                <div class="input-group"><label>Username or Email</label><input type="text" id="loginUsername" placeholder="Username or email@example.com"></div>
                 <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••"></div>
-                <div class="forgot-link" onclick="setAuthMode('forgot')">Forgot password?</div>
                 <div class="checkbox-row"><input type="checkbox" id="rememberMe"> <label>Remember me</label></div>
                 <button class="auth-btn" onclick="handleLogin()">Login →</button>
                 <div class="toggle-auth" onclick="setAuthMode('register')">✨ Create new account</div>
+                <div class="forgot-link" onclick="setAuthMode('forgot')">Forgot password? Contact admin</div>
+                <hr class="divider">
+                <div style="text-align:center; margin-top:8px;">
+                    <span style="font-size:12px; color:var(--text-muted);">📱 New device?</span>
+                    <span class="toggle-auth" style="font-size:12px; display:inline; margin-left:4px;" onclick="triggerImportAccountDataOnLogin()">Restore Account Data</span>
+                </div>
+                <input type="file" id="importAccountFileInputLogin" accept=".json" style="display:none" onchange="importFullAccountDataFromLogin(event)">
                 <div id="authMsg"></div>
             `;
-        } else if (authMode === 'register') {
-            container.innerHTML = `
+            } else if (authMode === 'register') {
+                container.innerHTML = `
                 <div class="auth-icon">📝</div>
                 <h2>Create Account</h2>
-                <p>Start your retail journey</p>
+                <p>Request access - Admin will approve</p>
                 <div class="input-group"><label>Full Name</label><input type="text" id="regName" placeholder="John Retailer"></div>
+                <div class="input-group"><label>Username</label><input type="text" id="regUsername" placeholder="Choose username"></div>
                 <div class="input-group"><label>Email</label><input type="email" id="regEmail" placeholder="email@example.com"></div>
                 <div class="input-group"><label>Password</label><input type="password" id="regPassword" placeholder="Minimum 6 characters"></div>
                 <div class="input-group"><label>Confirm Password</label><input type="password" id="regConfirm" placeholder="Re-enter password"></div>
-                <button class="auth-btn" onclick="handleRegister()">Register →</button>
+                <button class="auth-btn" onclick="handleRegister()">Request Registration →</button>
                 <div class="toggle-auth" onclick="setAuthMode('login')">← Back to Login</div>
                 <div id="authMsg"></div>
             `;
-        } else if (authMode === 'forgot') {
-            container.innerHTML = `
-                <div class="auth-icon">🔑</div>
-                <h2>Reset Password</h2>
-                <p>Enter your email to receive reset link</p>
-                <div class="input-group"><label>Email Address</label><input type="email" id="resetEmail" placeholder="your@email.com"></div>
-                <button class="auth-btn" onclick="handleForgotPassword()">Send Reset Email</button>
-                <div class="toggle-auth" onclick="setAuthMode('login')">← Remember password? Login</div>
-                <div id="authMsg"></div>
-            `;
+            } else if (authMode === 'forgot') {
+                container.innerHTML =
+                    `<div class="auth-icon">🔑</div><h2>Reset Password</h2><p>Contact admin at anilsouth65@gmail.com to reset your password</p><div class="toggle-auth" onclick="setAuthMode('login')">← Back to Login</div><div id="authMsg"></div>`;
+            }
         }
-    }
-    
-    function setAuthMode(mode) { authMode = mode; renderAuth(); }
-    function showAuthMsg(msg, isError = true) { const div = document.getElementById('authMsg'); if(div) div.innerHTML = `<div class="${isError ? 'error-msg' : 'success-msg'}">${msg}</div>`; setTimeout(() => { if(div) div.innerHTML = ''; }, 3000); }
-    
-    function handleLogin() {
-        const email = document.getElementById('loginEmail')?.value.trim();
-        const pwd = document.getElementById('loginPassword')?.value;
-        const remember = document.getElementById('rememberMe')?.checked;
-        if (!email || !pwd) return showAuthMsg('Please enter email and password');
-        const users = getUsers();
-        const user = users.find(u => u.email === email && u.password === pwd);
-        if (user) {
-            currentUser = { id: user.id, name: user.name, email: user.email };
-            if (remember) localStorage.setItem('pos_remembered', JSON.stringify({ email, pwd }));
-            else localStorage.removeItem('pos_remembered');
+
+        function setAuthMode(mode) { authMode = mode;
+            renderAuth(); }
+
+        function showAuthMsg(msg, isError = true) { const div = document.getElementById('authMsg'); if (div) div.innerHTML =
+                `<div class="${isError ? 'error-msg' : 'success-msg'}">${msg}</div>`; setTimeout(() => { if (div) div
+                    .innerHTML = ''; }, 4000); }
+
+        function handleLogin() {
+            const loginInput = document.getElementById('loginUsername')?.value.trim();
+            const pwd = document.getElementById('loginPassword')?.value;
+            if (!loginInput || !pwd) return showAuthMsg('Please enter username/email and password');
+
+            const users = getUsers();
+            let user = users.find(u => (u.username === loginInput || u.email === loginInput) && u.password === pwd);
+
+            if (!user) return showAuthMsg('Invalid credentials. Please check username/email and password.');
+            if (user.status !== 'approved') return showAuthMsg(
+                'Your account is pending admin approval. Wait for admin to approve.');
+
+            currentUser = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                username: user.username,
+                isAdmin: user.username === ADMIN_USERNAME || user.email === ADMIN_EMAIL
+            };
+
             document.getElementById('authOverlay').style.display = 'none';
             document.getElementById('appWrapper').style.display = 'flex';
-            document.getElementById('userGreeting').innerHTML = `👋 ${user.name} | Retail POS`;
+            document.getElementById('userGreeting').innerHTML =
+                `👋 ${user.name} | ${currentUser.isAdmin ? 'Administrator' : 'Retail POS'}`;
+
+            const adminBtn = document.getElementById('adminPanelBtn');
+            if (currentUser.isAdmin) adminBtn.style.display = 'inline-block';
+            else adminBtn.style.display = 'none';
+
             loadUserData();
             initPOS();
-            // Show ads sidebar after login
-            updateAdVisibility();
-        } else {
-            showAuthMsg('Invalid email or password. Create an account first.');
+            if (currentUser.isAdmin) renderAdminPanel();
+
+            const remember = document.getElementById('rememberMe')?.checked;
+            if (remember) localStorage.setItem('pos_remembered', JSON.stringify({ loginInput, pwd }));
+            else localStorage.removeItem('pos_remembered');
         }
-    }
-    
-    function handleRegister() {
-        const name = document.getElementById('regName')?.value.trim();
-        const email = document.getElementById('regEmail')?.value.trim();
-        const pwd = document.getElementById('regPassword')?.value;
-        const confirm = document.getElementById('regConfirm')?.value;
-        if (!name || !email || !pwd) return showAuthMsg('All fields required');
-        if (pwd.length < 6) return showAuthMsg('Password must be at least 6 characters');
-        if (pwd !== confirm) return showAuthMsg('Passwords do not match');
-        const users = getUsers();
-        if (users.find(u => u.email === email)) return showAuthMsg('Email already registered');
-        const newUser = { id: Date.now().toString(), name, email, password: pwd, createdAt: new Date().toISOString() };
-        users.push(newUser);
-        saveUsers(users);
-        showAuthMsg('Account created! Please login.', false);
-        setAuthMode('login');
-    }
-    
-    function handleForgotPassword() {
-        const email = document.getElementById('resetEmail')?.value.trim();
-        if (!email) return showAuthMsg('Enter your email address');
-        const users = getUsers();
-        const user = users.find(u => u.email === email);
-        if (!user) return showAuthMsg('No account found with this email');
-        showAuthMsg(`✅ Password reset link sent to ${email} (demo: use any new password)`, false);
-        setTimeout(() => {
-            const newPwd = prompt(`Demo Reset for ${email}\nEnter new password (min 6 chars):`);
-            if (newPwd && newPwd.length >= 6) {
-                user.password = newPwd;
-                saveUsers(users);
-                showAuthMsg('Password updated! You can now login.', false);
-                setAuthMode('login');
-            }
-        }, 500);
-    }
-    
-    function logoutUser() {
-        currentUser = null;
-        localStorage.removeItem('pos_remembered');
-        document.getElementById('authOverlay').style.display = 'flex';
-        document.getElementById('appWrapper').style.display = 'none';
-        setAuthMode('login');
-    }
-    
-    function toggleAdDemo() {
-        showAds = !showAds;
-        const sidebar = document.getElementById('adsSidebar');
-        const topBanner = document.getElementById('topAdBanner');
-        const toggleBtn = document.getElementById('adToggleBtn');
-        if (showAds) {
-            sidebar.style.display = 'block';
-            topBanner.style.display = 'block';
-            toggleBtn.innerHTML = '📢 Hide Demo Ads';
-        } else {
-            sidebar.style.display = 'none';
-            topBanner.style.display = 'none';
-            toggleBtn.innerHTML = '📢 Show Demo Ads';
-        }
-    }
-    
-    function updateAdVisibility() {
-        // Called after login, ensures ad containers are visible
-        const sidebar = document.getElementById('adsSidebar');
-        const topBanner = document.getElementById('topAdBanner');
-        if (sidebar) sidebar.style.display = 'block';
-        if (topBanner) topBanner.style.display = 'block';
-    }
-    
-    function loadUserData() {
-        const savedShop = localStorage.getItem(`shop_details_${currentUser.id}`);
-        if (savedShop) {
-            const shop = JSON.parse(savedShop);
-            document.getElementById('shopName').value = shop.name || '';
-            document.getElementById('shopAddress').value = shop.address || '';
-            document.getElementById('shopContact').value = shop.contact || '';
-            if (shop.logo) document.getElementById('storeLogoPreview').src = shop.logo;
-        }
-        renderReportTable();
-    }
-    
-    function saveShopDetails() {
-        if (!currentUser) return;
-        const shopData = {
-            name: document.getElementById('shopName').value,
-            address: document.getElementById('shopAddress').value,
-            contact: document.getElementById('shopContact').value,
-            logo: document.getElementById('storeLogoPreview').src || ''
-        };
-        localStorage.setItem(`shop_details_${currentUser.id}`, JSON.stringify(shopData));
-    }
-    
-    function newInvoiceToken() {
-        const date = new Date();
-        const token = `INV-${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random()*10000)}`;
-        document.getElementById('invoiceId').value = token;
-    }
-    
-    function addRow() {
-        const tbody = document.getElementById('itemsTableBody');
-        const row = document.createElement('tr');
-        row.innerHTML = `<td><input type="text" placeholder="Item description" class="item-desc"></td>
-                        <td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td>
-                        <td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td>
-                        <td class="item-amount" style="font-weight:600;">0.00</td>
-                        <td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>`;
-        tbody.appendChild(row);
-        calculateTotal();
-    }
-    
-    function deleteRow(btn) { btn.closest('tr').remove(); calculateTotal(); }
-    
-    function calculateTotal() {
-        let subtotal = 0;
-        document.querySelectorAll('#itemsTableBody tr').forEach(row => {
-            const qty = parseFloat(row.querySelector('.item-qty')?.value) || 0;
-            const rate = parseFloat(row.querySelector('.item-rate')?.value) || 0;
-            const amount = qty * rate;
-            const amountCell = row.querySelector('.item-amount');
-            if (amountCell) amountCell.innerText = amount.toFixed(2);
-            subtotal += amount;
-        });
-        const cgst = subtotal * 0.025;
-        const sgst = subtotal * 0.025;
-        const grand = subtotal + cgst + sgst;
-        document.getElementById('subtotalVal').innerText = `₹${subtotal.toFixed(2)}`;
-        document.getElementById('cgstVal').innerText = `₹${cgst.toFixed(2)}`;
-        document.getElementById('sgstVal').innerText = `₹${sgst.toFixed(2)}`;
-        document.getElementById('grandTotalVal').innerText = `₹${grand.toFixed(2)}`;
-        calcChange();
-    }
-    
-    function calcChange() {
-        const grandText = document.getElementById('grandTotalVal').innerText;
-        const grand = parseFloat(grandText.replace('₹', '')) || 0;
-        const cash = parseFloat(document.getElementById('cashTendered').value) || 0;
-        const change = cash - grand;
-        const changeDiv = document.getElementById('changeDue');
-        changeDiv.innerText = `₹${change.toFixed(2)}`;
-        changeDiv.className = change >= 0 ? "change-display clear" : "change-display";
-    }
-    
-    function saveCurrentInvoice() {
-        if (!currentUser) return;
-        saveShopDetails();
-        const items = [];
-        document.querySelectorAll('#itemsTableBody tr').forEach(row => {
-            const desc = row.querySelector('.item-desc')?.value || '';
-            const qty = row.querySelector('.item-qty')?.value || 0;
-            const rate = row.querySelector('.item-rate')?.value || 0;
-            if (desc) items.push({ desc, qty, rate, amount: (qty * rate).toFixed(2) });
-        });
-        const invoice = {
-            id: document.getElementById('invoiceId').value,
-            date: document.getElementById('invoiceDate').value,
-            status: document.getElementById('invoiceStatus').value,
-            shopName: document.getElementById('shopName').value || "My Store",
-            items: items,
-            subtotal: document.getElementById('subtotalVal').innerText,
-            cgst: document.getElementById('cgstVal').innerText,
-            sgst: document.getElementById('sgstVal').innerText,
-            grandTotal: document.getElementById('grandTotalVal').innerText,
-            timestamp: Date.now()
-        };
-        let invoices = getUserInvoices();
-        const existingIndex = invoices.findIndex(i => i.id === invoice.id);
-        if (existingIndex > -1) invoices[existingIndex] = invoice;
-        else invoices.unshift(invoice);
-        saveUserInvoices(invoices);
-        renderReportTable();
-        alert(`Invoice ${invoice.id} saved successfully!`);
-        newInvoiceToken();
-        resetForm();
-    }
-    
-    function resetForm() {
-        const tbody = document.getElementById('itemsTableBody');
-        tbody.innerHTML = `<tr><td><input type="text" placeholder="Item description" class="item-desc"></td>
-                            <td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td>
-                            <td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td>
-                            <td class="item-amount" style="font-weight:600;">0.00</td>
-                            <td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>`;
-        document.getElementById('cashTendered').value = '';
-        calculateTotal();
-    }
-    
-    function editInvoice(invoiceId) {
-        const invoices = getUserInvoices();
-        const inv = invoices.find(i => i.id === invoiceId);
-        if (!inv) return;
-        document.getElementById('invoiceId').value = inv.id;
-        document.getElementById('invoiceDate').value = inv.date;
-        document.getElementById('invoiceStatus').value = inv.status;
-        document.getElementById('shopName').value = inv.shopName;
-        const tbody = document.getElementById('itemsTableBody');
-        tbody.innerHTML = '';
-        inv.items.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td><input type="text" value="${escapeHtml(item.desc)}" class="item-desc"></td>
-                            <td><input type="number" value="${item.qty}" class="item-qty" oninput="calculateTotal()"></td>
-                            <td><input type="number" value="${item.rate}" class="item-rate" oninput="calculateTotal()"></td>
-                            <td class="item-amount">${item.amount}</td>
-                            <td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>`;
-            tbody.appendChild(row);
-        });
-        calculateTotal();
-        document.getElementById('printable-pos').scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    function deleteInvoice(invoiceId) {
-        if (confirm(`Delete invoice ${invoiceId} permanently?`)) {
-            let invoices = getUserInvoices();
-            invoices = invoices.filter(i => i.id !== invoiceId);
-            saveUserInvoices(invoices);
-            renderReportTable();
-        }
-    }
-    
-    function clearAllInvoices() {
-        if (confirm('⚠️ Delete ALL your saved invoices? This cannot be undone.')) {
-            saveUserInvoices([]);
-            renderReportTable();
-        }
-    }
-    
-    function renderReportTable() {
-        const tbody = document.getElementById('reportTableBody');
-        const invoices = getUserInvoices();
-        if (invoices.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:#64748b;">No invoices yet. Create your first invoice!</td></tr>`;
-            return;
-        }
-        tbody.innerHTML = '';
-        invoices.forEach(inv => {
-            let badgeClass = inv.status === 'Paid' ? 'badge-paid' : (inv.status === 'Pending' ? 'badge-pending' : 'badge-draft');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="font-weight:600; color:var(--primary);">${inv.id}</td>
-                <td>${inv.date}</td>
-                <td>${inv.shopName.substring(0, 25)}</td>
-                <td><span class="badge ${badgeClass}">${inv.status}</span></td>
-                <td style="text-align:right; font-weight:700;">${inv.grandTotal}</td>
-                <td style="text-align:center;">
-                    <button class="btn btn-edit" style="background:#eff6ff; padding:5px 10px; border-radius:6px; margin-right:5px;" onclick="editInvoice('${inv.id}')">✏️ Edit</button>
-                    <button class="btn btn-row-delete" style="background:#fff1f2; padding:5px 10px; border-radius:6px;" onclick="deleteInvoice('${inv.id}')">🗑️ Del</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-    
-    function shareBill() {
-        const total = document.getElementById('grandTotalVal').innerText;
-        const invNo = document.getElementById('invoiceId').value;
-        const text = `🧾 Invoice ${invNo}\nTotal: ${total}\nThank you for your business!`;
-        if (navigator.share) navigator.share({ title: 'Invoice', text });
-        else window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-    }
-    
-    function printInvoice() { window.print(); }
-    function triggerLogoUpload() { document.getElementById('logoInput').click(); }
-    function loadLogo(e) {
-        const reader = new FileReader();
-        reader.onload = ev => {
-            const preview = document.getElementById('storeLogoPreview');
-            const placeholder = document.getElementById('logoPlaceholder');
-            preview.src = ev.target.result;
-            preview.style.display = 'block';
-            placeholder.style.display = 'none';
-            saveShopDetails();
-        };
-        if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-    }
-    
-    function initPOS() {
-        document.getElementById('invoiceDate').valueAsDate = new Date();
-        newInvoiceToken();
-        calculateTotal();
-        renderReportTable();
-    }
-    
-    function toggleInfo() {
-        const content = document.getElementById('infoContent');
-        const arrow = document.getElementById('infoArrow');
-        if (content.style.display === 'none' || !content.style.display) {
-            content.style.display = 'grid';
-            arrow.innerText = '▼';
-        } else {
-            content.style.display = 'none';
-            arrow.innerText = '▲';
-        }
-    }
-    
-    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-    
-    window.onload = () => {
-        const remembered = localStorage.getItem('pos_remembered');
-        if (remembered) {
-            const { email, pwd } = JSON.parse(remembered);
+
+        function handleRegister() {
+            const name = document.getElementById('regName')?.value.trim();
+            const username = document.getElementById('regUsername')?.value.trim();
+            const email = document.getElementById('regEmail')?.value.trim();
+            const pwd = document.getElementById('regPassword')?.value;
+            const confirm = document.getElementById('regConfirm')?.value;
+
+            if (!name || !username || !email || !pwd) return showAuthMsg('All fields required');
+            if (pwd.length < 6) return showAuthMsg('Password must be at least 6 characters');
+            if (pwd !== confirm) return showAuthMsg('Passwords do not match');
+
             const users = getUsers();
-            const user = users.find(u => u.email === email && u.password === pwd);
-            if (user) {
-                currentUser = { id: user.id, name: user.name, email: user.email };
-                document.getElementById('authOverlay').style.display = 'none';
-                document.getElementById('appWrapper').style.display = 'flex';
-                document.getElementById('userGreeting').innerHTML = `👋 ${user.name} | Retail POS`;
-                loadUserData();
-                initPOS();
-                updateAdVisibility();
+            if (users.find(u => u.username === username)) return showAuthMsg('Username already taken');
+            if (users.find(u => u.email === email)) return showAuthMsg('Email already registered');
+
+            const newUser = {
+                id: Date.now().toString(),
+                name,
+                username,
+                email,
+                password: pwd,
+                status: 'pending',
+                isAdmin: false,
+                createdAt: new Date().toISOString()
+            };
+            users.push(newUser);
+            saveUsers(users);
+
+            showAuthMsg('Registration request sent! Admin will review and approve. You can login from any device once approved.',
+                false);
+            notifyAdmin(name, email, newUser.id, username);
+            setAuthMode('login');
+        }
+
+        // Admin functions: Approve / Reject
+        function approveUser(userId) {
+            let users = getUsers();
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex !== -1 && users[userIndex].status === 'pending') {
+                users[userIndex].status = 'approved';
+                saveUsers(users);
+
+                let pendingRequests = JSON.parse(localStorage.getItem('admin_pending_requests')) || [];
+                pendingRequests = pendingRequests.filter(r => r.userId !== userId);
+                localStorage.setItem('admin_pending_requests', JSON.stringify(pendingRequests));
+
+                renderAdminPanel();
+                alert(`✅ User ${users[userIndex].name} has been APPROVED. They can now login from any device.`);
+                showInAppNotification(`✅ Approved: ${users[userIndex].name}`);
+            }
+        }
+
+        function rejectUser(userId) {
+            let users = getUsers();
+            const userIndex = users.findIndex(u => u.id === userId);
+            if (userIndex !== -1 && users[userIndex].status === 'pending') {
+                const userName = users[userIndex].name;
+                users = users.filter(u => u.id !== userId);
+                saveUsers(users);
+
+                let pendingRequests = JSON.parse(localStorage.getItem('admin_pending_requests')) || [];
+                pendingRequests = pendingRequests.filter(r => r.userId !== userId);
+                localStorage.setItem('admin_pending_requests', JSON.stringify(pendingRequests));
+
+                renderAdminPanel();
+                alert(`❌ User ${userName} has been REJECTED and removed.`);
+                showInAppNotification(`❌ Rejected: ${userName}`);
+            }
+        }
+
+        function renderAdminPanel() {
+            if (!currentUser || !currentUser.isAdmin) return;
+
+            const users = getUsers();
+            const pendingUsers = users.filter(u => u.status === 'pending' && !u.isAdmin);
+            const approvedUsers = users.filter(u => u.status === 'approved' && !u.isAdmin);
+
+            const container = document.getElementById('adminPanelContainer');
+            if (!container) return;
+
+            container.style.display = 'block';
+            container.innerHTML = `
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <span>👑 Admin Approval Dashboard (ANIV6536)</span>
+                    <span class="pending-badge">${pendingUsers.length} Pending</span>
+                </div>
+                ${pendingUsers.length === 0 ?
+                    '<div style="padding:30px; text-align:center; color: #64748b;">✅ No pending registrations. All users are approved.</div>' :
+                    pendingUsers.map(user => `
+                        <div class="user-row">
+                            <div class="user-info">
+                                <strong>${escapeHtml(user.name)}</strong>
+                                <small>Username: ${escapeHtml(user.username)} | Email: ${escapeHtml(user.email)}</small>
+                            </div>
+                            <div>
+                                <button class="approve-btn" onclick="approveUser('${user.id}')">✅ Approve</button>
+                                <button class="reject-btn" onclick="rejectUser('${user.id}')">❌ Reject</button>
+                            </div>
+                        </div>
+                    `).join('')
+                }
+                ${approvedUsers.length > 0 ? `
+                    <div style="padding: 12px 24px; background: #f1f5f9; border-top: 1px solid var(--border);">
+                        <details>
+                            <summary style="font-weight: 600; cursor: pointer;">📋 Approved Users (${approvedUsers.length})</summary>
+                            <div style="margin-top: 10px;">
+                                ${approvedUsers.map(user => `<div style="padding: 5px 0;">• ${escapeHtml(user.name)} (${escapeHtml(user.username)})</div>`).join('')}
+                            </div>
+                        </details>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        }
+
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanelContainer');
+            if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('pos_remembered');
+            document.getElementById('authOverlay').style.display = 'flex';
+            document.getElementById('appWrapper').style.display = 'none';
+            setAuthMode('login');
+            const adminPanel = document.getElementById('adminPanelContainer');
+            if (adminPanel) adminPanel.style.display = 'none';
+            currentFilterMonth = 'all';
+            currentFilterYear = 'all';
+        }
+
+        function loadUserData() {
+            if (!currentUser) return;
+            const savedShop = localStorage.getItem(`shop_details_${currentUser.id}`);
+            if (savedShop) {
+                const shop = JSON.parse(savedShop);
+                document.getElementById('shopName').value = shop.name || '';
+                document.getElementById('shopAddress').value = shop.address || '';
+                document.getElementById('shopContact').value = shop.contact || '';
+                if (shop.logo) {
+                    document.getElementById('storeLogoPreview').src = shop.logo;
+                    document.getElementById('storeLogoPreview').style.display = 'block';
+                    document.getElementById('logoPlaceholder').style.display = 'none';
+                }
+            }
+            populateYearFilter();
+            applyInvoiceFilter();
+        }
+
+        function saveShopDetails() {
+            if (!currentUser) return;
+            const shopData = {
+                name: document.getElementById('shopName').value,
+                address: document.getElementById('shopAddress').value,
+                contact: document.getElementById('shopContact').value,
+                logo: document.getElementById('storeLogoPreview').src || ''
+            };
+            localStorage.setItem(`shop_details_${currentUser.id}`, JSON.stringify(shopData));
+        }
+
+        function newInvoiceToken() {
+            const date = new Date();
+            const token =
+                `INV-${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random()*10000)}`;
+            document.getElementById('invoiceId').value = token;
+        }
+
+        function addRow() {
+            const tbody = document.getElementById('itemsTableBody');
+            const row = document.createElement('tr');
+            row.innerHTML =
+                `<td><input type="text" placeholder="Item description" class="item-desc"></td><td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td><td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td><td class="item-amount" style="font-weight:600;">0.00</td><td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>`;
+            tbody.appendChild(row);
+            calculateTotal();
+        }
+
+        function deleteRow(btn) { btn.closest('tr').remove();
+            calculateTotal(); }
+
+        function calculateTotal() {
+            let subtotal = 0;
+            document.querySelectorAll('#itemsTableBody tr').forEach(row => {
+                const qty = parseFloat(row.querySelector('.item-qty')?.value) || 0;
+                const rate = parseFloat(row.querySelector('.item-rate')?.value) || 0;
+                const amount = qty * rate;
+                const amountCell = row.querySelector('.item-amount');
+                if (amountCell) amountCell.innerText = amount.toFixed(2);
+                subtotal += amount;
+            });
+            let cgstPercent = parseFloat(document.getElementById('cgstPercent').value) || 0;
+            let sgstPercent = parseFloat(document.getElementById('sgstPercent').value) || 0;
+            let cessPercent = parseFloat(document.getElementById('cessPercent').value) || 0;
+            document.getElementById('cgstPercentDisplay').innerText = cgstPercent;
+            document.getElementById('sgstPercentDisplay').innerText = sgstPercent;
+            document.getElementById('cessPercentDisplay').innerText = cessPercent;
+            const cgst = subtotal * (cgstPercent / 100);
+            const sgst = subtotal * (sgstPercent / 100);
+            const cess = subtotal * (cessPercent / 100);
+            const grand = subtotal + cgst + sgst + cess;
+            document.getElementById('subtotalVal').innerHTML = `₹${subtotal.toFixed(2)}`;
+            document.getElementById('cgstVal').innerHTML = `₹${cgst.toFixed(2)}`;
+            document.getElementById('sgstVal').innerHTML = `₹${sgst.toFixed(2)}`;
+            const cessRow = document.getElementById('cessRow');
+            if (cessPercent !== 0) {
+                cessRow.style.display = 'flex';
+                document.getElementById('cessVal').innerHTML = `₹${cess.toFixed(2)}`;
+            } else {
+                cessRow.style.display = 'none';
+            }
+            document.getElementById('grandTotalVal').innerHTML = `₹${grand.toFixed(2)}`;
+        }
+
+        function saveCurrentInvoice() {
+            if (!currentUser) return;
+            saveShopDetails();
+            const items = [];
+            document.querySelectorAll('#itemsTableBody tr').forEach(row => {
+                const desc = row.querySelector('.item-desc')?.value || '';
+                const qty = row.querySelector('.item-qty')?.value || 0;
+                const rate = row.querySelector('.item-rate')?.value || 0;
+                if (desc) items.push({ desc, qty, rate, amount: (qty * rate).toFixed(2) });
+            });
+            const invoice = {
+                id: document.getElementById('invoiceId').value,
+                date: document.getElementById('invoiceDate').value,
+                status: document.getElementById('invoiceStatus').value,
+                shopName: document.getElementById('shopName').value || "My Store",
+                items,
+                subtotal: document.getElementById('subtotalVal').innerHTML,
+                cgstPercent: document.getElementById('cgstPercent').value,
+                sgstPercent: document.getElementById('sgstPercent').value,
+                cessPercent: document.getElementById('cessPercent').value,
+                grandTotal: document.getElementById('grandTotalVal').innerHTML,
+                timestamp: Date.now()
+            };
+            let invoices = getUserInvoices();
+            const existingIndex = invoices.findIndex(i => i.id === invoice.id);
+            if (existingIndex > -1) invoices[existingIndex] = invoice;
+            else invoices.unshift(invoice);
+            saveUserInvoices(invoices);
+            populateYearFilter();
+            applyInvoiceFilter();
+            alert(`Invoice ${invoice.id} saved!`);
+            newInvoiceToken();
+            resetForm();
+        }
+
+        function resetForm() {
+            const tbody = document.getElementById('itemsTableBody');
+            tbody.innerHTML =
+                `<tr><td><input type="text" placeholder="Item description" class="item-desc"></td><td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td><td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td><td class="item-amount">0.00</td><td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td></tr>`;
+            calculateTotal();
+        }
+
+        function editInvoice(invoiceId) {
+            const invoices = getUserInvoices();
+            const inv = invoices.find(i => i.id === invoiceId);
+            if (!inv) return;
+            document.getElementById('invoiceId').value = inv.id;
+            document.getElementById('invoiceDate').value = inv.date;
+            document.getElementById('invoiceStatus').value = inv.status;
+            document.getElementById('shopName').value = inv.shopName;
+            if (inv.cgstPercent) document.getElementById('cgstPercent').value = inv.cgstPercent;
+            if (inv.sgstPercent) document.getElementById('sgstPercent').value = inv.sgstPercent;
+            if (inv.cessPercent) document.getElementById('cessPercent').value = inv.cessPercent;
+            const tbody = document.getElementById('itemsTableBody');
+            tbody.innerHTML = '';
+            inv.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML =
+                    `<td><input type="text" value="${escapeHtml(item.desc)}" class="item-desc"></td><td><input type="number" value="${item.qty}" class="item-qty" oninput="calculateTotal()"></td><td><input type="number" value="${item.rate}" class="item-rate" oninput="calculateTotal()"></td><td class="item-amount">${item.amount}</td><td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>`;
+                tbody.appendChild(row);
+            });
+            calculateTotal();
+        }
+
+        function deleteInvoice(invoiceId) {
+            if (confirm(`Delete ${invoiceId}?`)) {
+                let invoices = getUserInvoices();
+                invoices = invoices.filter(i => i.id !== invoiceId);
+                saveUserInvoices(invoices);
+                populateYearFilter();
+                applyInvoiceFilter();
+            }
+        }
+
+        // ======================== FILTER FUNCTIONS ========================
+        function getFilteredInvoices() {
+            const invoices = getUserInvoices();
+            if (currentFilterMonth === 'all' && currentFilterYear === 'all') return invoices;
+            return invoices.filter(inv => {
+                if (!inv.date) return false;
+                const parts = inv.date.split('-');
+                if (parts.length < 2) return false;
+                const invYear = parts[0];
+                const invMonth = parts[1];
+                let match = true;
+                if (currentFilterYear !== 'all') match = match && (invYear === currentFilterYear);
+                if (currentFilterMonth !== 'all') match = match && (invMonth === currentFilterMonth);
+                return match;
+            });
+        }
+
+        function applyInvoiceFilter() {
+            currentFilterMonth = document.getElementById('filterMonth')?.value || 'all';
+            currentFilterYear = document.getElementById('filterYear')?.value || 'all';
+            renderReportTable();
+            updateTotalSummary();
+        }
+
+        function resetInvoiceFilter() {
+            document.getElementById('filterMonth').value = 'all';
+            document.getElementById('filterYear').value = 'all';
+            currentFilterMonth = 'all';
+            currentFilterYear = 'all';
+            renderReportTable();
+            updateTotalSummary();
+        }
+
+        function populateYearFilter() {
+            const invoices = getUserInvoices();
+            const yearSelect = document.getElementById('filterYear');
+            if (!yearSelect) return;
+            const years = new Set();
+            invoices.forEach(inv => {
+                if (inv.date) {
+                    const year = inv.date.split('-')[0];
+                    if (year) years.add(year);
+                }
+            });
+            const currentVal = yearSelect.value;
+            yearSelect.innerHTML = '<option value="all">All Years</option>';
+            [...years].sort().reverse().forEach(y => {
+                yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+            });
+            yearSelect.value = currentVal || 'all';
+            document.getElementById('filteredCountLabel').innerText =
+                (currentFilterMonth === 'all' && currentFilterYear === 'all') ? 'Showing all invoices' :
+                `Filtered: ${currentFilterMonth !== 'all' ? getMonthName(currentFilterMonth) : ''} ${currentFilterYear !== 'all' ? currentFilterYear : ''}`;
+        }
+
+        function getMonthName(monthNum) {
+            const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+                'October', 'November', 'December'
+            ];
+            return months[parseInt(monthNum)] || '';
+        }
+
+        function updateTotalSummary() {
+            const filtered = getFilteredInvoices();
+            let totalAmount = 0;
+            filtered.forEach(inv => {
+                const gt = inv.grandTotal || '₹0.00';
+                const num = parseFloat(gt.replace(/[₹,\s]/g, '')) || 0;
+                totalAmount += num;
+            });
+            document.getElementById('totalFilteredAmount').innerHTML = `₹${totalAmount.toFixed(2)}`;
+            document.getElementById('totalInvoiceCount').innerHTML =
+                `${filtered.length} invoice${filtered.length !== 1 ? 's' : ''}`;
+            document.getElementById('filteredCountLabel').innerText =
+                (currentFilterMonth === 'all' && currentFilterYear === 'all') ?
+                `Showing all ${filtered.length} invoices` :
+                `Filtered: ${currentFilterMonth !== 'all' ? getMonthName(currentFilterMonth) : ''} ${currentFilterYear !== 'all' ? currentFilterYear : ''} · ${filtered.length} invoice${filtered.length !== 1 ? 's' : ''}`;
+        }
+
+        function renderReportTable() {
+            const tbody = document.getElementById('reportTableBody');
+            const invoices = getFilteredInvoices();
+            if (invoices.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">📭 No invoices found${(currentFilterMonth !== 'all' || currentFilterYear !== 'all') ? ' for this filter' : ''}. Create your first invoice!</td></tr>`;
+                updateTotalSummary();
                 return;
             }
+            tbody.innerHTML = '';
+            invoices.forEach(inv => {
+                let badgeClass = inv.status === 'Paid' ? 'badge-paid' : (inv.status === 'Pending' ?
+                    'badge-pending' : 'badge-draft');
+                const row = document.createElement('tr');
+                row.innerHTML =
+                    `<td style="font-weight:600;">${escapeHtml(inv.id)}</td><td>${escapeHtml(inv.date || '')}</td><td>${escapeHtml(inv.shopName || '')}</td><td><span class="badge ${badgeClass}">${escapeHtml(inv.status)}</span></td><td style="text-align:right; font-weight:600;">${inv.grandTotal || '₹0.00'}</td><td style="text-align:center;"><button class="btn btn-sm" style="background:#eff6ff; padding:5px 10px;" onclick="editInvoice('${escapeHtml(inv.id)}')">✏️ Edit</button> <button class="btn btn-sm" style="background:#fff1f2; padding:5px 10px;" onclick="deleteInvoice('${escapeHtml(inv.id)}')">🗑️ Del</button></td>`;
+                tbody.appendChild(row);
+            });
+            updateTotalSummary();
         }
-        renderAuth();
-        document.getElementById('authOverlay').style.display = 'flex';
-        document.getElementById('appWrapper').style.display = 'none';
-    };
-</script>
+
+        // ======================== EXPORT / IMPORT FUNCTIONS ========================
+
+        // Export invoices only (JSON)
+        function exportInvoicesToJSON() {
+            if (!currentUser) return;
+            const invoices = getUserInvoices();
+            if (invoices.length === 0) {
+                alert('No invoices to export.');
+                return;
+            }
+            const exportData = {
+                exportedBy: currentUser.username,
+                exportedAt: new Date().toISOString(),
+                userId: currentUser.id,
+                invoiceCount: invoices.length,
+                invoices: invoices
+            };
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download =
+                `pos_invoices_${currentUser.username}_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showInAppNotification(`📤 Exported ${invoices.length} invoices successfully!`);
+        }
+
+        // Trigger file input for importing invoices
+        function triggerImportInvoices() {
+            document.getElementById('importInvoicesFileInput').click();
+        }
+
+        // Import invoices from JSON (merges with existing)
+        function importInvoicesFromJSON(event) {
+            if (!currentUser) return;
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.invoices || !Array.isArray(data.invoices)) {
+                        alert('Invalid invoice file format. Please select a valid POS invoice export file.');
+                        return;
+                    }
+                    let existingInvoices = getUserInvoices();
+                    let addedCount = 0;
+                    let updatedCount = 0;
+                    data.invoices.forEach(importedInv => {
+                        const existingIndex = existingInvoices.findIndex(i => i.id === importedInv.id);
+                        if (existingIndex > -1) {
+                            if (confirm(
+                                    `Invoice ${importedInv.id} already exists. Overwrite with imported version?`
+                                    )) {
+                                existingInvoices[existingIndex] = importedInv;
+                                updatedCount++;
+                            }
+                        } else {
+                            existingInvoices.unshift(importedInv);
+                            addedCount++;
+                        }
+                    });
+                    saveUserInvoices(existingInvoices);
+                    populateYearFilter();
+                    applyInvoiceFilter();
+                    alert(
+                        `✅ Import complete!\n📥 ${addedCount} new invoices added\n🔄 ${updatedCount} invoices updated\n📋 Total: ${existingInvoices.length} invoices`
+                        );
+                    showInAppNotification(
+                        `📥 Imported: ${addedCount} new, ${updatedCount} updated invoices`);
+                } catch (err) {
+                    alert('❌ Error reading file. Please ensure it is a valid JSON file.');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Export FULL account data (for cross-device migration)
+        function exportFullAccountData() {
+            if (!currentUser) return;
+            const users = getUsers();
+            const userData = users.find(u => u.id === currentUser.id);
+            const shopData = localStorage.getItem(`shop_details_${currentUser.id}`);
+            const invoices = getUserInvoices();
+            const exportPackage = {
+                appName: 'POS Retail Pro',
+                version: '2.0',
+                exportedAt: new Date().toISOString(),
+                account: {
+                    id: userData?.id,
+                    name: userData?.name,
+                    username: userData?.username,
+                    email: userData?.email,
+                    password: userData?.password,
+                    status: userData?.status,
+                    isAdmin: userData?.isAdmin,
+                    createdAt: userData?.createdAt
+                },
+                shopDetails: shopData ? JSON.parse(shopData) : null,
+                invoices: invoices,
+                invoiceCount: invoices.length
+            };
+            const blob = new Blob([JSON.stringify(exportPackage, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download =
+                `pos_full_backup_${currentUser.username}_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert(
+                `📦 Full account data exported!\n\n👤 Account: ${currentUser.username}\n📋 Invoices: ${invoices.length}\n📱 You can now import this file on another device or mobile to restore your account.\n\n⚠️ Keep this file safe! It contains your login credentials.`
+                );
+            showInAppNotification(`📦 Full account data exported! Use this file to restore on another device.`);
+        }
+
+        // Trigger file input for importing account data (from main app)
+        function triggerImportAccountData() {
+            document.getElementById('importAccountFileInput').click();
+        }
+
+        // Trigger file input for importing account data (from login screen)
+        function triggerImportAccountDataOnLogin() {
+            document.getElementById('importAccountFileInputLogin').click();
+        }
+
+        // Import full account data (from main app)
+        function importFullAccountData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.account || !data.account.username || !data.account.password) {
+                        alert(
+                            '❌ Invalid backup file. This file does not contain valid account data. Please use a POS Retail Pro backup file.'
+                            );
+                        return;
+                    }
+                    processAccountImport(data);
+                } catch (err) {
+                    alert('❌ Error reading file. Please ensure it is a valid POS Retail Pro backup file.');
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Import full account data (from login screen)
+        function importFullAccountDataFromLogin(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.account || !data.account.username || !data.account.password) {
+                        showAuthMsg(
+                            '❌ Invalid backup file. Please use a POS Retail Pro backup file.',
+                            true);
+                        return;
+                    }
+                    const success = processAccountImportFromLogin(data);
+                    if (success) {
+                        showAuthMsg(
+                            '✅ Account restored! You can now login with your credentials.',
+                            false);
+                    }
+                } catch (err) {
+                    showAuthMsg('❌ Error reading file. Please ensure it is a valid JSON file.',
+                    true);
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function processAccountImport(data) {
+            let users = getUsers();
+            const existingIndex = users.findIndex(u => u.id === data.account.id || u.username === data.account
+                .username || u.email === data.account.email);
+            if (existingIndex > -1) {
+                if (!confirm(
+                        `Account "${data.account.username}" already exists in this browser. Overwrite with imported data?\n\nThis will update the account and merge invoices.`
+                        )) return;
+                users[existingIndex] = { ...users[existingIndex], ...data.account };
+            } else {
+                users.push(data.account);
+            }
+            saveUsers(users);
+
+            if (data.shopDetails && currentUser) {
+                localStorage.setItem(`shop_details_${data.account.id}`, JSON.stringify(data.shopDetails));
+            }
+
+            if (data.invoices && Array.isArray(data.invoices) && currentUser) {
+                let existingInvoices = getUserInvoices();
+                let addedCount = 0;
+                data.invoices.forEach(importedInv => {
+                    const exists = existingInvoices.findIndex(i => i.id === importedInv.id);
+                    if (exists === -1) {
+                        existingInvoices.unshift(importedInv);
+                        addedCount++;
+                    }
+                });
+                saveUserInvoices(existingInvoices);
+                alert(
+                    `✅ Account data imported!\n📋 ${addedCount} new invoices merged.\n🔐 Please re-login for changes to take full effect.`
+                    );
+                showInAppNotification(`📥 Account data imported. Re-login recommended.`);
+            } else {
+                alert('✅ Account data imported! Please re-login for changes to take full effect.');
+            }
+
+            populateYearFilter();
+            applyInvoiceFilter();
+            loadUserData();
+        }
+
+        function processAccountImportFromLogin(data) {
+            let users = getUsers();
+            const existingIndex = users.findIndex(u => u.id === data.account.id || u.username === data.account
+                .username || u.email === data.account.email);
+            if (existingIndex > -1) {
+                users[existingIndex] = { ...users[existingIndex], ...data.account, status: data.account.status ||
+                        'approved' };
+            } else {
+                data.account.status = data.account.status || 'approved';
+                users.push(data.account);
+            }
+            saveUsers(users);
+
+            if (data.shopDetails) {
+                localStorage.setItem(`shop_details_${data.account.id}`, JSON.stringify(data.shopDetails));
+            }
+            if (data.invoices && Array.isArray(data.invoices)) {
+                localStorage.setItem(`pos_invoices_${data.account.id}`, JSON.stringify(data.invoices));
+            }
+            return true;
+        }
+
+        // ======================== OTHER FUNCTIONS ========================
+        function shareBill() {
+            const total = document.getElementById('grandTotalVal').innerText;
+            const invNo = document.getElementById('invoiceId').value;
+            const text = `🧾 Invoice ${invNo}\nTotal: ${total}\nThank you!`;
+            if (navigator.share) navigator.share({ title: 'Invoice', text });
+            else window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function printInvoice() { window.print(); }
+
+        function triggerLogoUpload() { document.getElementById('logoInput').click(); }
+
+        function loadLogo(e) {
+            const reader = new FileReader();
+            reader.onload = ev => {
+                const preview = document.getElementById('storeLogoPreview');
+                const placeholder = document.getElementById('logoPlaceholder');
+                preview.src = ev.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+                saveShopDetails();
+            };
+            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function initPOS() {
+            document.getElementById('invoiceDate').valueAsDate = new Date();
+            newInvoiceToken();
+            calculateTotal();
+            populateYearFilter();
+            applyInvoiceFilter();
+            if (currentUser && currentUser.isAdmin) renderAdminPanel();
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;'; return m; });
+        }
+
+        // Initialize on page load
+        window.onload = () => {
+            initAdminAccount();
+
+            const remembered = localStorage.getItem('pos_remembered');
+            if (remembered) {
+                const { loginInput, pwd } = JSON.parse(remembered);
+                const users = getUsers();
+                let user = users.find(u => (u.username === loginInput || u.email === loginInput) && u
+                    .password === pwd && u.status === 'approved');
+                if (user) {
+                    currentUser = {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        username: user.username,
+                        isAdmin: user.username === ADMIN_USERNAME || user.email === ADMIN_EMAIL
+                    };
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('appWrapper').style.display = 'flex';
+                    document.getElementById('userGreeting').innerHTML =
+                        `👋 ${user.name} | ${currentUser.isAdmin ? 'Administrator' : 'Retail POS'}`;
+                    if (currentUser.isAdmin) document.getElementById('adminPanelBtn').style.display =
+                        'inline-block';
+                    loadUserData();
+                    initPOS();
+                    return;
+                }
+            }
+            renderAuth();
+            document.getElementById('authOverlay').style.display = 'flex';
+            document.getElementById('appWrapper').style.display = 'none';
+        };
+    </script>
 </body>
 </html>
