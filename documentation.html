@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation | POS Retail Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488; --primary-dark: #0f766e; --primary-light: #14b8a6;
+            --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --text-secondary: #475569;
+            --border: #e2e8f0; --radius-sm: 10px; --radius: 16px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--surface); border-radius: 60px; padding: 10px 20px;
+            box-shadow: var(--shadow); margin-bottom: 24px; flex-wrap: wrap; gap: 10px;
+            border: 1px solid var(--border);
+        }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; }
+        .logo span { color: var(--primary); }
+        .btn { padding: 8px 18px; border-radius: 30px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 13px; border: 1px solid var(--border); color: var(--text); background: var(--surface); transition: 0.2s; display: inline-block; }
+        .btn:hover { background: #f1f5f9; }
+        .card {
+            background: var(--surface); border-radius: var(--radius); padding: 32px;
+            box-shadow: var(--shadow); border: 1px solid var(--border); line-height: 1.7;
+        }
+        h1 { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+        h2 { font-size: 20px; font-weight: 700; margin: 24px 0 12px; color: var(--primary-dark); }
+        p, li { color: var(--text-secondary); margin-bottom: 10px; }
+        ul { margin-left: 20px; margin-bottom: 16px; }
+        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        @media (max-width: 600px) { .card { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">🧾 POS<span>Retail</span>Pro</div>
+            <a href="index.html" class="btn">← Back to Home</a>
+        </nav>
+        <div class="card">
+            <h1>📚 Documentation</h1>
+            <p>Welcome to POS Retail Pro! This guide will help you get started with the platform quickly.</p>
+
+            <h2>Getting Started</h2>
+            <ul>
+                <li><strong>Create an Account:</strong> Click <strong>Get Started</strong> on the home page and fill in your details. An admin will approve your account.</li>
+                <li><strong>Login:</strong> Once approved, use your username/email and password on the <strong>Sign In</strong> page.</li>
+                <li><strong>Dashboard:</strong> After login you'll see your invoice ledger, stats, and admin panel (if you're an admin).</li>
+            </ul>
+
+            <h2>Creating an Invoice</h2>
+            <ul>
+                <li>Click <strong>+ New Invoice</strong> on the dashboard.</li>
+                <li>Fill in your store details (auto‑saved for future use).</li>
+                <li>Add the customer's information under <strong>Bill To</strong>.</li>
+                <li>Set <strong>CGST, SGST, Cess</strong> percentages manually for each invoice.</li>
+                <li>Add products/services using the <strong>+ Add Item</strong> button. Each row calculates automatically.</li>
+                <li>Use <strong>Save Invoice</strong> to store it, or <strong>Print / PDF</strong> to generate a professional document.</li>
+            </ul>
+
+            <h2>Invoice Ledger & Filtering</h2>
+            <p>On the dashboard, you can filter invoices by <strong>month</strong> and <strong>year</strong>. The total revenue for the selected period updates instantly.</p>
+
+            <h2>Admin Approval</h2>
+            <p>If you're the admin (<code>ANIV6536</code> by default), you'll see an <strong>Admin Panel</strong> on the dashboard. From there you can:</p>
+            <ul>
+                <li>Approve or reject pending user registrations.</li>
+                <li>View a list of all approved users.</li>
+            </ul>
+
+            <h2>Cross‑Device Sync</h2>
+            <p>Use the <strong>Export</strong> button (on dashboard or create invoice page) to download your full account data. On a new device, open the login page and click <strong>Restore from Backup</strong> to import everything – account, invoices, shop details, logo.</p>
+
+            <h2>Keyboard Shortcuts</h2>
+            <ul>
+                <li><code>Ctrl+S</code> (or <code>Cmd+S</code> on Mac) – Save invoice.</li>
+                <li><code>Ctrl+P</code> – Print invoice.</li>
+            </ul>
+
+            <h2>Need more help?</h2>
+            <p>Contact the admin at <strong>anilsouth65@gmail.com</strong>.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Admin | POS Retail Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488; --primary-dark: #0f766e; --bg: #f8fafc; --surface: #ffffff;
+            --text: #0f172a; --text-secondary: #475569; --border: #e2e8f0;
+            --radius-sm: 10px; --radius: 16px; --shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; }
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--surface); border-radius: 60px; padding: 10px 20px;
+            box-shadow: var(--shadow); margin-bottom: 24px; border: 1px solid var(--border);
+        }
+        .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; }
+        .logo span { color: var(--primary); }
+        .btn { padding: 8px 18px; border-radius: 30px; font-weight: 600; text-decoration: none; font-size: 13px; border: 1px solid var(--border); color: var(--text); transition: 0.2s; display: inline-block; }
+        .btn:hover { background: #f1f5f9; }
+        .card {
+            background: var(--surface); border-radius: var(--radius); padding: 32px;
+            box-shadow: var(--shadow); border: 1px solid var(--border); line-height: 1.7;
+        }
+        h1 { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+        .contact-method { margin: 20px 0; }
+        .contact-method strong { color: var(--primary-dark); }
+        @media (max-width: 600px) { .card { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">🧾 POS<span>Retail</span>Pro</div>
+            <a href="index.html" class="btn">← Back to Home</a>
+        </nav>
+        <div class="card">
+            <h1>📧 Contact Admin</h1>
+            <p>If you need help with your account, have a question, or want to report an issue, feel free to reach out to the platform administrator.</p>
+
+            <div class="contact-method">
+                <strong>📧 Email:</strong> <a href="mailto:anilsouth65@gmail.com">anilsouth65@gmail.com</a>
+            </div>
+            <div class="contact-method">
+                <strong>👤 Admin Username:</strong> ANIV6536
+            </div>
+            <p style="margin-top:20px; color:var(--text-secondary); font-size:14px;">
+                For immediate assistance regarding account approval, invoice data recovery, or platform feedback, please send an email. We typically respond within 24 hours.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

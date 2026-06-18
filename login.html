@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | POS Retail Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --bg: #f0fdfa;
+            --surface: #ffffff;
+            --text: #111827;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --radius-xs: 6px;
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow: 0 8px 30px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.12);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 30%, #e0f2fe 60%, #fefce8 100%);
+            display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+        .bg-decoration {
+            position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.4;
+        }
+        .bg-circle-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(13,148,136,0.15) 0%, transparent 70%); top: -80px; right: -60px; }
+        .bg-circle-2 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%); bottom: -60px; left: -50px; }
+        .bg-circle-3 { width: 180px; height: 180px; background: radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 70%); top: 50%; left: 60%; transform: translate(-50%, -50%); }
+        .auth-container { position: relative; z-index: 1; width: 100%; max-width: 460px; }
+        .auth-card {
+            background: var(--surface); padding: 42px 34px; border-radius: 24px;
+            box-shadow: var(--shadow-lg); border: 1px solid rgba(255,255,255,0.6);
+            animation: cardIn 0.45s ease-out;
+            position: relative;
+        }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+        .auth-card.shake { animation: shake 0.5s ease-in-out; }
+
+        /* Back button */
+        .back-home {
+            position: absolute; top: 16px; left: 20px;
+            text-decoration: none; color: var(--text-secondary); font-size: 13px;
+            font-weight: 500; display: flex; align-items: center; gap: 4px;
+            transition: color 0.2s; background: none; border: none; cursor: pointer;
+        }
+        .back-home:hover { color: var(--primary); }
+
+        .auth-icon-wrapper { display: flex; justify-content: center; margin-bottom: 20px; margin-top: 10px; }
+        .auth-icon {
+            font-size: 44px; background: #ecfdf5; width: 78px; height: 78px;
+            display: flex; align-items: center; justify-content: center; border-radius: 50%;
+            color: var(--primary); border: 3px solid #d1fae5; transition: transform 0.3s;
+        }
+        .auth-icon:hover { transform: scale(1.05); }
+        h2 { font-size: 26px; font-weight: 800; text-align: center; margin-bottom: 6px; color: var(--text); letter-spacing: -0.5px; }
+        .subtitle { font-size: 14px; color: var(--text-secondary); text-align: center; margin-bottom: 28px; line-height: 1.5; }
+        .input-group { margin-bottom: 18px; }
+        .input-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 6px; color: var(--text); }
+        .input-group input {
+            width: 100%; padding: 12px 14px; border: 2px solid var(--border); border-radius: var(--radius-sm);
+            font-size: 15px; outline: none; transition: all 0.2s; background: #fafafa; color: var(--text);
+        }
+        .input-group input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(13,148,136,0.08); }
+        .input-group input.error { border-color: #ef4444; background: #fef2f2; }
+        .remember-row { display: flex; align-items: center; gap: 8px; margin: 12px 0; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+        .remember-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+        .btn {
+            width: 100%; padding: 13px 20px; border: none; border-radius: var(--radius-sm); font-size: 15px;
+            font-weight: 700; cursor: pointer; transition: all 0.25s; letter-spacing: -0.2px;
+            position: relative; overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #0f766e 100%);
+            color: white; box-shadow: 0 6px 20px rgba(13,148,136,0.25);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(13,148,136,0.4); }
+        .btn-primary:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(13,148,136,0.2); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .toggle-link {
+            display: block; margin-top: 20px; text-align: center; font-size: 13px;
+            color: var(--primary); cursor: pointer; font-weight: 600; transition: color 0.2s;
+            border: none; background: none; width: 100%;
+        }
+        .toggle-link:hover { color: var(--primary-dark); text-decoration: underline; }
+        .restore-section { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; }
+        .restore-section .restore-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; }
+        .restore-btn {
+            background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer;
+            font-size: 13px; padding: 6px 14px; border-radius: 20px; transition: all 0.2s;
+        }
+        .restore-btn:hover { background: #f0fdfa; }
+        .msg-box {
+            padding: 11px 16px; border-radius: 30px; font-size: 13px; margin-top: 14px;
+            text-align: center; font-weight: 500; animation: fadeInMsg 0.3s ease-out;
+        }
+        @keyframes fadeInMsg { from { opacity:0; transform: translateY(-6px); } to { opacity:1; transform: translateY(0); } }
+        .error-msg { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .success-msg { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+        .info-msg { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .stats-container {
+            margin-top: 12px; padding: 8px 12px; background: #f9fafb; border-radius: 20px;
+            font-size: 12px; color: var(--text-secondary); display: flex; justify-content: center;
+            gap: 12px; flex-wrap: wrap;
+        }
+        .stat-item { display: flex; align-items: center; gap: 4px; }
+        .stat-item strong { color: var(--text); }
+        @media (max-width: 500px) {
+            .auth-card { padding: 30px 20px; border-radius: 20px; }
+            h2 { font-size: 22px; }
+            .auth-icon { width: 64px; height: 64px; font-size: 36px; }
+            .back-home { top: 10px; left: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration bg-circle-1"></div>
+    <div class="bg-decoration bg-circle-2"></div>
+    <div class="bg-decoration bg-circle-3"></div>
+
+    <div class="auth-container">
+        <div class="auth-card" id="authCard">
+            <a href="index.html" class="back-home">← Back to Home</a>
+            <div id="authContent"></div>
+        </div>
+    </div>
+
+    <input type="file" id="hiddenImportFile" accept=".json" style="display:none" onchange="handleImport(event)">
+
+    <script>
+        (function() {
+            const ADMIN_USERNAME = 'ANIV6536';
+            const ADMIN_PASSWORD = 'ANIV6536';
+            const ADMIN_EMAIL = 'anilsouth65@gmail.com';
+
+            function getUsers() { try { return JSON.parse(localStorage.getItem('pos_users_approved')) || []; } catch(e) { return []; } }
+            function saveUsers(u) { localStorage.setItem('pos_users_approved', JSON.stringify(u)); }
+
+            function initAdmin() {
+                let users = getUsers();
+                if (!users.find(u => u.username === ADMIN_USERNAME || u.email === ADMIN_EMAIL)) {
+                    users.push({
+                        id: 'admin_001', name: 'Admin', username: ADMIN_USERNAME,
+                        password: ADMIN_PASSWORD, email: ADMIN_EMAIL,
+                        status: 'approved', isAdmin: true, createdAt: new Date().toISOString()
+                    });
+                    saveUsers(users);
+                }
+            }
+            initAdmin();
+
+            let currentMode = new URLSearchParams(window.location.search).get('mode') || 'login';
+            let isLoading = false;
+            const authContent = document.getElementById('authContent');
+
+            function updateUserStats() {
+                const statsDiv = document.getElementById('userStats');
+                if (!statsDiv) return;
+                const users = getUsers();
+                const total = users.length;
+                const approved = users.filter(u => u.status === 'approved').length;
+                const pending = users.filter(u => u.status === 'pending').length;
+                statsDiv.innerHTML = `
+                    <span class="stat-item">📋 Total: <strong>${total}</strong></span>
+                    <span class="stat-item">✅ Approved: <strong>${approved}</strong></span>
+                    <span class="stat-item">⏳ Pending: <strong>${pending}</strong></span>
+                `;
+            }
+
+            function renderLogin() {
+                currentMode = 'login';
+                authContent.innerHTML = `
+                    <div class="auth-icon-wrapper"><div class="auth-icon">🔐</div></div>
+                    <h2>Welcome Back</h2>
+                    <p class="subtitle">Sign in to your POS Retail Pro dashboard</p>
+                    <div class="input-group">
+                        <label>Username or Email</label>
+                        <input type="text" id="loginUsername" placeholder="Username or email@example.com" autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+                    </div>
+                    <div class="remember-row" onclick="document.getElementById('rememberMe').click()">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe" style="cursor:pointer;">Keep me signed in</label>
+                    </div>
+                    <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">
+                        <span id="loginBtnText">Sign In →</span>
+                    </button>
+                    <button class="toggle-link" onclick="switchToRegister()">
+                        ✨ Don't have an account? <strong>Create one</strong>
+                    </button>
+                    <div class="restore-section">
+                        <div class="restore-label">📱 Using a new device?</div>
+                        <button class="restore-btn" onclick="document.getElementById('hiddenImportFile').click()">
+                            📥 Restore Account from Backup
+                        </button>
+                        <div class="restore-label" style="margin-top:12px;">👥 Platform Users</div>
+                        <div class="stats-container" id="userStats">Loading stats…</div>
+                    </div>
+                    <div id="authMsg"></div>
+                `;
+                updateUserStats();
+                setTimeout(() => {
+                    const input = document.getElementById('loginUsername');
+                    if (input) input.focus();
+                }, 100);
+                const pwd = document.getElementById('loginPassword');
+                if (pwd) pwd.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
+                const uname = document.getElementById('loginUsername');
+                if (uname) uname.addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('loginPassword')?.focus(); });
+            }
+
+            function renderRegister() {
+                currentMode = 'register';
+                authContent.innerHTML = `
+                    <div class="auth-icon-wrapper"><div class="auth-icon">📝</div></div>
+                    <h2>Create Account</h2>
+                    <p class="subtitle">Request access — your admin will review and approve</p>
+                    <div class="input-group"><label>Full Name</label><input type="text" id="regName" placeholder="John Retailer" autocomplete="name"></div>
+                    <div class="input-group"><label>Choose a Username</label><input type="text" id="regUsername" placeholder="johndoe" autocomplete="username"></div>
+                    <div class="input-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="john@example.com" autocomplete="email"></div>
+                    <div class="input-group"><label>Password</label><input type="password" id="regPassword" placeholder="Minimum 6 characters" autocomplete="new-password"></div>
+                    <div class="input-group"><label>Confirm Password</label><input type="password" id="regConfirm" placeholder="Re-enter your password" autocomplete="new-password"></div>
+                    <button class="btn btn-primary" id="registerBtn" onclick="handleRegister()">
+                        <span id="registerBtnText">Request Registration →</span>
+                    </button>
+                    <button class="toggle-link" onclick="switchToLogin()">← <strong>Back to Sign In</strong></button>
+                    <div class="restore-section">
+                        <div class="restore-label" style="margin-top:12px;">👥 Platform Users</div>
+                        <div class="stats-container" id="userStats">Loading stats…</div>
+                    </div>
+                    <div id="authMsg"></div>
+                `;
+                updateUserStats();
+                setTimeout(() => { document.getElementById('regName')?.focus(); }, 100);
+                const confirm = document.getElementById('regConfirm');
+                if (confirm) confirm.addEventListener('keydown', (e) => { if (e.key === 'Enter') handleRegister(); });
+            }
+
+            if (currentMode === 'register') renderRegister(); else renderLogin();
+
+            window.switchToRegister = function() { renderRegister(); if (window.history.replaceState) window.history.replaceState({}, '', '?mode=register'); clearMsg(); };
+            window.switchToLogin = function() { renderLogin(); if (window.history.replaceState) window.history.replaceState({}, '', '?mode=login'); clearMsg(); };
+
+            function showMsg(msg, type) {
+                const div = document.getElementById('authMsg'); if (!div) return;
+                const cls = type === 'error' ? 'error-msg' : type === 'success' ? 'success-msg' : 'info-msg';
+                div.innerHTML = `<div class="msg-box ${cls}">${msg}</div>`;
+                clearTimeout(showMsg._timeout);
+                showMsg._timeout = setTimeout(() => { if (div) div.innerHTML = ''; }, 5000);
+            }
+            function clearMsg() { const div = document.getElementById('authMsg'); if (div) div.innerHTML = ''; }
+
+            function setLoading(btnId, textId, loading) {
+                const btn = document.getElementById(btnId), text = document.getElementById(textId);
+                if (!btn || !text) return;
+                isLoading = loading; btn.disabled = loading;
+                text.innerHTML = loading ? '<span class="spinner"></span> Processing...' : (btnId === 'loginBtn' ? 'Sign In →' : 'Request Registration →');
+            }
+
+            window.handleLogin = function() {
+                if (isLoading) return; clearMsg();
+                const u = document.getElementById('loginUsername')?.value.trim(), p = document.getElementById('loginPassword')?.value;
+                let hasError = false;
+                const unameInp = document.getElementById('loginUsername'), pwdInp = document.getElementById('loginPassword');
+                [unameInp, pwdInp].forEach(i => i?.classList.remove('error'));
+                if (!u) { unameInp?.classList.add('error'); hasError = true; }
+                if (!p) { pwdInp?.classList.add('error'); hasError = true; }
+                if (hasError) { showMsg('Please enter both username/email and password.', 'error'); if (!u) unameInp?.focus(); else pwdInp?.focus(); return; }
+                setLoading('loginBtn', 'loginBtnText', true);
+                setTimeout(() => {
+                    try {
+                        const users = getUsers();
+                        const user = users.find(x => (x.username === u || x.email === u) && x.password === p);
+                        if (!user) {
+                            showMsg('Invalid credentials.', 'error');
+                            document.getElementById('authCard').classList.add('shake');
+                            setTimeout(() => document.getElementById('authCard').classList.remove('shake'), 500);
+                            setLoading('loginBtn', 'loginBtnText', false); pwdInp?.focus(); return;
+                        }
+                        if (user.status !== 'approved') { showMsg('Your account is pending admin approval.', 'info'); setLoading('loginBtn', 'loginBtnText', false); return; }
+                        sessionStorage.setItem('pos_current_user', JSON.stringify({ id: user.id, name: user.name, username: user.username, email: user.email, isAdmin: user.isAdmin || false }));
+                        if (document.getElementById('rememberMe')?.checked) localStorage.setItem('pos_remembered', JSON.stringify({ loginInput: u, pwd: p }));
+                        else localStorage.removeItem('pos_remembered');
+                        showMsg('✅ Login successful! Redirecting...', 'success');
+                        setTimeout(() => { window.location.href = 'dashboard.html'; }, 600);
+                    } catch (err) { showMsg('⚠️ An error occurred.', 'error'); console.error(err); setLoading('loginBtn', 'loginBtnText', false); }
+                }, 300);
+            };
+
+            window.handleRegister = function() {
+                if (isLoading) return; clearMsg();
+                const name = document.getElementById('regName')?.value.trim(), username = document.getElementById('regUsername')?.value.trim(), email = document.getElementById('regEmail')?.value.trim(), pwd = document.getElementById('regPassword')?.value, confirm = document.getElementById('regConfirm')?.value;
+                const nI = document.getElementById('regName'), uI = document.getElementById('regUsername'), eI = document.getElementById('regEmail'), pI = document.getElementById('regPassword'), cI = document.getElementById('regConfirm');
+                [nI, uI, eI, pI, cI].forEach(i => i?.classList.remove('error'));
+                if (!name || !username || !email || !pwd || !confirm) { if (!name) nI?.classList.add('error'); if (!username) uI?.classList.add('error'); if (!email) eI?.classList.add('error'); if (!pwd) pI?.classList.add('error'); if (!confirm) cI?.classList.add('error'); showMsg('All fields are required.', 'error'); return; }
+                if (pwd.length < 6) { pI?.classList.add('error'); showMsg('Password must be at least 6 characters.', 'error'); return; }
+                if (pwd !== confirm) { cI?.classList.add('error'); showMsg('Passwords do not match.', 'error'); return; }
+                setLoading('registerBtn', 'registerBtnText', true);
+                setTimeout(() => {
+                    try {
+                        const users = getUsers();
+                        if (users.find(u => u.username === username)) { showMsg('Username already taken.', 'error'); uI?.classList.add('error'); setLoading('registerBtn', 'registerBtnText', false); return; }
+                        if (users.find(u => u.email === email)) { showMsg('Email already registered.', 'error'); eI?.classList.add('error'); setLoading('registerBtn', 'registerBtnText', false); return; }
+                        const newUser = { id: Date.now().toString(), name, username, email, password: pwd, status: 'pending', isAdmin: false, createdAt: new Date().toISOString() };
+                        users.push(newUser); saveUsers(users);
+                        let pending = JSON.parse(localStorage.getItem('admin_pending_requests') || '[]');
+                        if (!pending.find(r => r.userId === newUser.id)) pending.push({ userId: newUser.id, name, email, username, status: 'pending', requestedAt: Date.now() });
+                        localStorage.setItem('admin_pending_requests', JSON.stringify(pending));
+                        updateUserStats();
+                        showMsg('✅ Registration submitted! Admin will approve.', 'success');
+                        setLoading('registerBtn', 'registerBtnText', false);
+                        setTimeout(() => { switchToLogin(); setTimeout(() => { const lu = document.getElementById('loginUsername'); if (lu) lu.value = username; }, 200); }, 2000);
+                    } catch (err) { showMsg('⚠️ Error occurred.', 'error'); console.error(err); setLoading('registerBtn', 'registerBtnText', false); }
+                }, 400);
+            };
+
+            window.handleImport = function(e) {
+                const file = e.target.files[0]; if (!file) return;
+                clearMsg(); showMsg('📂 Reading backup...', 'info');
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (!data.account || !data.account.username || !data.account.password) { showMsg('Invalid backup file.', 'error'); return; }
+                        const users = getUsers();
+                        const idx = users.findIndex(u => u.id === data.account.id || u.username === data.account.username || u.email === data.account.email);
+                        if (idx > -1) users[idx] = { ...users[idx], ...data.account, status: data.account.status || users[idx].status || 'approved' };
+                        else { data.account.status = data.account.status || 'approved'; users.push(data.account); }
+                        saveUsers(users);
+                        if (data.shopDetails && data.account.id) localStorage.setItem(`shop_details_${data.account.id}`, JSON.stringify(data.shopDetails));
+                        if (data.invoices && data.account.id) localStorage.setItem(`pos_invoices_${data.account.id}`, JSON.stringify(data.invoices));
+                        updateUserStats();
+                        showMsg('✅ Account restored! You can now sign in.', 'success');
+                        setTimeout(() => { const lu = document.getElementById('loginUsername'); if (lu) lu.value = data.account.username || data.account.email || ''; document.getElementById('loginPassword')?.focus(); }, 300);
+                    } catch (err) { showMsg('Error reading file.', 'error'); console.error(err); }
+                };
+                reader.onerror = () => showMsg('Unable to read file.', 'error');
+                reader.readAsText(file);
+                e.target.value = '';
+            };
+
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) updateUserStats(); });
+        })();
+    </script>
+</body>
+</html>

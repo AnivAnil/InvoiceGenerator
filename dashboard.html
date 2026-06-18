@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Dashboard | POS Retail Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --radius-xs: 6px;
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 22px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.10);
+            --gradient-primary: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #0f766e 100%);
+        }
+        body.dark {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --border-light: #1e293b;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        body.dark .greeting-badge { background: #134e4a; color: #a7f3d0; }
+        body.dark .greeting-badge .role-tag { background: #0f766e; color: white; }
+        body.dark .total-highlight { background: linear-gradient(135deg, #134e4a, #0f766e); border-color: #14b8a6; }
+        body.dark .total-highlight .big-amount { color: #a7f3d0; }
+        body.dark .btn-secondary { background: #334155; border-color: #475569; color: #e2e8f0; }
+        body.dark .btn-secondary:hover { background: #475569; }
+        body.dark .filter-bar { background: #1e293b; border-color: #334155; }
+        body.dark .filter-bar select,
+        body.dark .filter-bar input { background: #0f172a; color: #e2e8f0; border-color: #475569; }
+        body.dark table th { background: #1e293b; color: #cbd5e1; }
+        body.dark tbody tr:hover td { background: #334155; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--surface); border-radius: 60px; padding: 10px 20px;
+            box-shadow: var(--shadow); margin-bottom: 24px; flex-wrap: wrap; gap: 10px;
+            border: 1px solid var(--border-light);
+        }
+        .logo-group { display: flex; align-items: center; gap: 10px; }
+        .logo-icon {
+            width: 40px; height: 40px; background: var(--gradient-primary);
+            border-radius: var(--radius-xs); display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: white; font-weight: 800;
+        }
+        .logo-text { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+        .logo-text span { color: var(--primary); }
+        .nav-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .greeting-badge {
+            background: #ecfdf5; padding: 7px 16px; border-radius: 40px;
+            font-weight: 600; color: #047857; font-size: 13px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .greeting-badge .role-tag {
+            background: #d1fae5; padding: 2px 10px; border-radius: 20px;
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+            font-size: 13px; font-weight: 600; border-radius: 30px; border: none;
+            cursor: pointer; transition: all 0.2s; text-decoration: none;
+            white-space: nowrap; letter-spacing: -0.2px;
+        }
+        .btn-primary { background: var(--gradient-primary); color: white; box-shadow: 0 4px 14px rgba(13,148,136,0.25); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(13,148,136,0.4); }
+        .btn-secondary { background: #f1f5f9; color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-danger { background: #fef2f2; color: #dc2626; }
+        .btn-danger:hover { background: #fde8e8; }
+        .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+        .stats-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px; margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--surface); border-radius: var(--radius); padding: 20px 24px;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); transition: all 0.3s;
+        }
+        .stat-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+        .stat-card .stat-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
+        .stat-card .stat-value { font-size: 32px; font-weight: 900; letter-spacing: -1px; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-card .stat-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+        .card {
+            background: var(--surface); border-radius: var(--radius-lg); padding: 24px;
+            box-shadow: var(--shadow); border: 1px solid var(--border-light); margin-bottom: 24px;
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+        .card-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+        .card-subtitle { font-size: 13px; color: var(--text-secondary); }
+
+        .filter-bar {
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+            padding: 12px 16px; background: #f8fafc; border-radius: var(--radius-sm);
+            margin-bottom: 16px; border: 1px solid var(--border-light);
+        }
+        .filter-bar select,
+        .filter-bar input {
+            padding: 8px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; outline: none;
+        }
+        .filter-bar select:focus,
+        .filter-bar input:focus { border-color: var(--primary); }
+        .total-highlight {
+            background: linear-gradient(135deg, #f0fdfa 0%, #d1fae5 100%);
+            border: 2px solid var(--primary-light); border-radius: var(--radius); padding: 20px 24px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
+        }
+        .total-highlight .big-amount { font-size: 34px; font-weight: 900; color: #065f46; letter-spacing: -1px; }
+
+        .table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th {
+            background: #f8fafc; padding: 14px 16px; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary);
+            text-align: left; border-bottom: 2px solid var(--border);
+        }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border-light); font-size: 14px; }
+        tbody tr { transition: background 0.2s; }
+        tbody tr:hover { background: #f8fafc; }
+        .badge {
+            display: inline-block; padding: 3px 12px; border-radius: 20px;
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .badge-paid { background: #ecfdf5; color: #059669; }
+        .badge-pending { background: #fffbeb; color: #b45309; }
+        .badge-draft { background: #f1f5f9; color: #64748b; }
+        .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
+
+        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+        .pagination button {
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px;
+            background: var(--surface); color: var(--text); cursor: pointer; font-weight: 600; transition: 0.2s;
+        }
+        .pagination button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .pagination button:hover:not(.active) { background: #f1f5f9; }
+
+        .admin-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            box-shadow: var(--shadow); border: 1px solid var(--border-light); overflow: hidden;
+        }
+        .admin-card-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .pending-count { background: #f59e0b; color: white; padding: 4px 14px; border-radius: 30px; font-size: 11px; font-weight: 700; }
+        .user-list-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 24px; border-bottom: 1px solid var(--border-light);
+        }
+        .btn-approve { background: #10b981; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+        .btn-reject { background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+        .btn-edit-user { background: #3b82f6; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin: 20px auto; }
+        canvas { width: 100%; height: auto; }
+
+        .bulk-actions { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+        .checkbox-cell { width: 30px; text-align: center; }
+        .badge-notification {
+            position: absolute; top: -4px; right: -4px;
+            background: #ef4444; color: white; width: 18px; height: 18px;
+            border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(15,23,42,0.8); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+            animation: fadeIn 0.2s;
+        }
+        .modal {
+            background: var(--surface); border-radius: var(--radius-lg); padding: 32px;
+            max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto;
+            box-shadow: var(--shadow-xl); position: relative;
+        }
+        .modal-close { position: absolute; top:16px; right:20px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); }
+        .invoice-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        .invoice-table th, .invoice-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .stat-card .stat-value { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="appRoot"></div>
+    <input type="file" id="hiddenImportFile" accept=".json" style="display:none">
+    <div id="modalContainer"></div>
+
+    <script>
+        (function() {
+            const ADMIN_EMAIL = 'anilsouth65@gmail.com';
+            const ADMIN_USERNAME = 'ANIV6536';
+            const ITEMS_PER_PAGE = 10;
+
+            function getCurrentUser() {
+                try { return JSON.parse(sessionStorage.getItem('pos_current_user')); } catch(e) { return null; }
+            }
+            function getUsers() {
+                try { return JSON.parse(localStorage.getItem('pos_users_approved')) || []; } catch(e) { return []; }
+            }
+            function saveUsers(users) { localStorage.setItem('pos_users_approved', JSON.stringify(users)); }
+            function getUserInvoices(uid) {
+                try { return JSON.parse(localStorage.getItem(`pos_invoices_${uid}`)) || []; } catch(e) { return []; }
+            }
+            function saveUserInvoices(uid, invoices) { localStorage.setItem(`pos_invoices_${uid}`, JSON.stringify(invoices)); }
+            function escHtml(s) {
+                if (!s) return '';
+                return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            }
+
+            const user = getCurrentUser();
+            const appRoot = document.getElementById('appRoot');
+
+            if (!user || !user.id) {
+                appRoot.innerHTML = `
+                    <div style="text-align:center; padding:80px 20px;">
+                        <div style="font-size:64px;">🔒</div>
+                        <h2 style="font-weight:800;">Not Signed In</h2>
+                        <p style="color:var(--text-secondary);">Please log in to access your dashboard.</p>
+                        <a href="login.html" class="btn btn-primary" style="font-size:15px; padding:12px 28px;">Go to Login</a>
+                    </div>`;
+                return;
+            }
+
+            // Ensure admin exists
+            (function ensureAdmin() {
+                let users = getUsers();
+                if (!users.find(u => u.username === ADMIN_USERNAME || u.email === ADMIN_EMAIL)) {
+                    users.push({
+                        id: 'admin_001', name: 'Admin', username: ADMIN_USERNAME,
+                        password: 'ANIV6536', email: ADMIN_EMAIL,
+                        status: 'approved', isAdmin: true, createdAt: new Date().toISOString()
+                    });
+                    saveUsers(users);
+                }
+            })();
+
+            const invoices = getUserInvoices(user.id);
+            const totalInvoices = invoices.length;
+            const paidInvoices = invoices.filter(i => i.status === 'Paid').length;
+            const totalRevenue = invoices.reduce((sum, i) => sum + (parseFloat(String(i.grandTotal || '0').replace(/[₹,\s]/g,'')) || 0), 0);
+            const thisMonth = new Date().getMonth() + 1;
+            const thisYear = new Date().getFullYear();
+            const thisMonthInvoices = invoices.filter(i => {
+                if (!i.date) return false;
+                const [y, m] = i.date.split('-');
+                return +y === thisYear && +m === thisMonth;
+            });
+            const thisMonthRevenue = thisMonthInvoices.reduce((s, i) => s + (parseFloat(String(i.grandTotal || '0').replace(/[₹,\s]/g,'')) || 0), 0);
+            const avgInvoiceValue = totalInvoices ? totalRevenue / totalInvoices : 0;
+
+            appRoot.innerHTML = `
+                <nav class="navbar">
+                    <div class="logo-group"><div class="logo-icon">🧾</div><div class="logo-text">POS<span>Retail</span>Pro</div></div>
+                    <div class="nav-right">
+                        <div class="greeting-badge">👋 ${escHtml(user.name)} <span class="role-tag">${user.isAdmin ? 'Admin' : 'Retailer'}</span></div>
+                        ${user.isAdmin ? `<button class="btn btn-secondary" onclick="toggleAdminPanel()" style="position:relative;">👑 Admin<span id="adminNotificationBadge" class="badge-notification" style="display:none;"></span></button>` : ''}
+                        <button class="btn btn-secondary" onclick="toggleDarkMode()" title="Toggle dark mode">🌓 Dark</button>
+                        <button class="btn btn-secondary" onclick="exportAccount()" title="Download all your data as a backup file">📦 Export</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('hiddenImportFile').click()" title="Restore your account from a backup file">📥 Import</button>
+                        <a href="create-invoice.html" class="btn btn-primary">+ New Invoice</a>
+                        <button class="btn btn-danger" onclick="logout()" title="Sign out">🚪 Logout</button>
+                    </div>
+                </nav>
+
+                <div class="stats-row">
+                    <div class="stat-card"><div class="stat-label">📋 Total Invoices</div><div class="stat-value">${totalInvoices}</div><div class="stat-sub">All time</div></div>
+                    <div class="stat-card"><div class="stat-label">✅ Paid</div><div class="stat-value">${paidInvoices}</div><div class="stat-sub">${totalInvoices ? Math.round(paidInvoices/totalInvoices*100) : 0}% rate</div></div>
+                    <div class="stat-card"><div class="stat-label">💰 Total Revenue</div><div class="stat-value">₹${totalRevenue.toLocaleString('en-IN', {minimumFractionDigits:2})}</div><div class="stat-sub">All invoices</div></div>
+                    <div class="stat-card"><div class="stat-label">📅 This Month</div><div class="stat-value">₹${thisMonthRevenue.toLocaleString('en-IN', {minimumFractionDigits:2})}</div><div class="stat-sub">${thisMonthInvoices.length} invoices</div></div>
+                    <div class="stat-card"><div class="stat-label">📊 Avg Invoice</div><div class="stat-value">₹${avgInvoiceValue.toLocaleString('en-IN', {minimumFractionDigits:2})}</div><div class="stat-sub">Per invoice</div></div>
+                    <div class="stat-card"><div class="stat-label">📱 Users</div><div class="stat-value" id="totalUsersCount">-</div><div class="stat-sub">Registered</div></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📈 Monthly Revenue (Last 6 Months)</div>
+                    <div class="chart-container"><canvas id="revenueChart" width="400" height="200"></canvas></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">📋 Invoice Ledger</div>
+                            <div class="card-subtitle">Search, filter, and manage invoices</div>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-secondary btn-sm" onclick="exportInvoicesJSON()" title="Export invoices as JSON">📤 JSON</button>
+                            <button class="btn btn-secondary btn-sm" onclick="exportInvoicesCSV()" title="Export invoices as CSV">📊 CSV</button>
+                            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importInvoicesFile').click()" title="Import invoices from JSON">📥 Import</button>
+                            <input type="file" id="importInvoicesFile" accept=".json" style="display:none">
+                        </div>
+                    </div>
+                    <div class="filter-bar">
+                        <input type="text" id="searchInput" placeholder="🔍 Search by ID or store..." style="flex:1; min-width:150px;">
+                        <input type="date" id="dateFrom" title="From date">
+                        <input type="date" id="dateTo" title="To date">
+                        <select id="filterMonth">
+                            <option value="all">All Months</option>
+                            ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map((m,i) => `<option value="${i+1}">${m}</option>`).join('')}
+                        </select>
+                        <select id="filterYear"><option value="all">All Years</option></select>
+                        <button class="btn btn-secondary btn-sm" onclick="resetFilter()" title="Clear all filters">🔄 Reset</button>
+                        <span id="filterInfo" style="margin-left:auto; font-size:11px; color:var(--text-muted);">Showing all</span>
+                    </div>
+                    <div class="bulk-actions" id="bulkActions" style="display:none;">
+                        <span id="selectedCount">0 selected</span>
+                        <button class="btn btn-danger btn-sm" onclick="bulkDelete()">🗑️ Delete Selected</button>
+                        <button class="btn btn-secondary btn-sm" onclick="bulkExport()">📤 Export Selected</button>
+                    </div>
+                    <div class="total-highlight">
+                        <div><div style="font-weight:600;">💰 Filtered Total</div><div id="filteredCount" style="font-size:11px;">0 invoices</div></div>
+                        <div class="big-amount" id="filteredTotal">₹0.00</div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-cell"><input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)"></th>
+                                    <th>Invoice #</th><th>Date</th><th>Store</th><th>Status</th>
+                                    <th style="text-align:right;">Total</th><th style="text-align:center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+
+                <div class="card" id="analyticsCard">
+                    <h3>📊 Top Customers & Items</h3>
+                    <div id="topCustomers" style="margin:10px 0;"></div>
+                    <div id="topItems"></div>
+                </div>
+
+                <div id="adminPanelContainer"></div>
+            `;
+
+            // ─────────── DARK MODE ───────────
+            window.toggleDarkMode = function() {
+                document.body.classList.toggle('dark');
+                localStorage.setItem('pos_dark_mode', document.body.classList.contains('dark') ? '1' : '0');
+            };
+            if (localStorage.getItem('pos_dark_mode') === '1') document.body.classList.add('dark');
+
+            // ─────────── POPULATE YEAR FILTER ───────────
+            function populateYearFilter() {
+                const sel = document.getElementById('filterYear');
+                if (!sel) return;
+                const years = new Set();
+                invoices.forEach(i => { if (i.date) years.add(i.date.split('-')[0]); });
+                sel.innerHTML = '<option value="all">All Years</option>';
+                [...years].sort().reverse().forEach(y => { sel.innerHTML += `<option value="${y}">${y}</option>`; });
+            }
+            populateYearFilter();
+
+            // ─────────── UPDATE USER COUNT ───────────
+            function updateUserCount() {
+                const el = document.getElementById('totalUsersCount');
+                if (el) el.textContent = getUsers().length;
+            }
+            updateUserCount();
+
+            // ─────────── CHART ───────────
+            function drawChart() {
+                const canvas = document.getElementById('revenueChart');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const months = [];
+                const today = new Date();
+                for (let i = 5; i >= 0; i--) {
+                    let d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                    months.push({ year: d.getFullYear(), month: d.getMonth() + 1, label: d.toLocaleString('default', { month: 'short', year: 'numeric' }) });
+                }
+                const data = months.map(m => {
+                    return invoices
+                        .filter(i => {
+                            if (!i.date) return false;
+                            const [y, mon] = i.date.split('-');
+                            return +y === m.year && +mon === m.month;
+                        })
+                        .reduce((sum, inv) => sum + (parseFloat(String(inv.grandTotal || '0').replace(/[₹,\s]/g,'')) || 0), 0);
+                });
+                const max = Math.max(...data, 1);
+                const barWidth = 40;
+                const gap = 20;
+                const startX = 60;
+                const bottomY = canvas.height - 30;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text-secondary').trim() || '#475569';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                data.forEach((val, idx) => {
+                    const x = startX + idx * (barWidth + gap);
+                    const barHeight = (val / max) * (bottomY - 30);
+                    ctx.fillStyle = '#0d9488';
+                    ctx.fillRect(x, bottomY - barHeight, barWidth, barHeight);
+                    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim();
+                    ctx.fillText('₹' + (val / 1000).toFixed(1) + 'k', x + barWidth / 2, bottomY - barHeight - 8);
+                    ctx.fillText(months[idx].label, x + barWidth / 2, bottomY + 15);
+                });
+            }
+
+            // ─────────── FILTER & SEARCH LOGIC ───────────
+            let currentPage = 1;
+            let filterMonth = 'all', filterYear = 'all';
+            let searchQuery = '';
+            let dateFrom = '', dateTo = '';
+
+            function getFilteredInvoices() {
+                let filtered = invoices;
+                if (filterMonth !== 'all' || filterYear !== 'all') {
+                    filtered = filtered.filter(i => {
+                        if (!i.date) return false;
+                        const [y, m] = i.date.split('-');
+                        return (filterYear === 'all' || y === filterYear) && (filterMonth === 'all' || m === filterMonth);
+                    });
+                }
+                if (searchQuery.trim()) {
+                    const q = searchQuery.toLowerCase();
+                    filtered = filtered.filter(i =>
+                        (i.id && i.id.toLowerCase().includes(q)) ||
+                        (i.shopName && i.shopName.toLowerCase().includes(q))
+                    );
+                }
+                if (dateFrom) filtered = filtered.filter(i => i.date >= dateFrom);
+                if (dateTo) filtered = filtered.filter(i => i.date <= dateTo);
+                return filtered;
+            }
+
+            function paginate(array) {
+                const start = (currentPage - 1) * ITEMS_PER_PAGE;
+                return array.slice(start, start + ITEMS_PER_PAGE);
+            }
+
+            function renderTable() {
+                const filtered = getFilteredInvoices();
+                const totalFiltered = filtered.length;
+                const paged = paginate(filtered);
+                const tbody = document.getElementById('invoiceTableBody');
+                if (!paged.length) {
+                    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">📭</div><h3>No invoices found</h3><p>Try adjusting your filters.</p></div></td></tr>`;
+                } else {
+                    tbody.innerHTML = paged.map(inv => {
+                        const badge = inv.status === 'Paid' ? 'badge-paid' : inv.status === 'Pending' ? 'badge-pending' : 'badge-draft';
+                        return `<tr>
+                            <td class="checkbox-cell"><input type="checkbox" class="invoice-check" value="${inv.id}" onchange="updateBulkActions()"></td>
+                            <td style="font-weight:600;">${escHtml(inv.id)}</td>
+                            <td>${escHtml(inv.date || '-')}</td>
+                            <td>${escHtml(inv.shopName || '-')}</td>
+                            <td><span class="badge ${badge}">${inv.status}</span></td>
+                            <td style="text-align:right; font-weight:600;">${inv.grandTotal || '₹0.00'}</td>
+                            <td style="text-align:center;">
+                                <button class="btn btn-secondary btn-sm" onclick="viewInvoice('${inv.id}')" title="Quick view">👁️ View</button>
+                                <button class="btn btn-secondary btn-sm" onclick="editInvoice('${inv.id}')" title="Edit">✏️</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${inv.id}')" title="Delete">🗑️</button>
+                            </td>
+                        </tr>`;
+                    }).join('');
+                }
+                const totalAmount = filtered.reduce((s, i) => s + (parseFloat(String(i.grandTotal || '0').replace(/[₹,\s]/g,'')) || 0), 0);
+                document.getElementById('filteredTotal').textContent = `₹${totalAmount.toLocaleString('en-IN', {minimumFractionDigits:2})}`;
+                document.getElementById('filteredCount').textContent = `${totalFiltered} invoice${totalFiltered !== 1 ? 's' : ''}`;
+                document.getElementById('filterInfo').textContent = (filterMonth === 'all' && filterYear === 'all' && !searchQuery && !dateFrom && !dateTo) ?
+                    `Showing all ${totalFiltered} invoices` : `Filtered: ${totalFiltered} result${totalFiltered !== 1 ? 's' : ''}`;
+                // Pagination
+                const totalPages = Math.ceil(totalFiltered / ITEMS_PER_PAGE);
+                const pagDiv = document.getElementById('pagination');
+                pagDiv.innerHTML = '';
+                if (totalPages > 1) {
+                    for (let i = 1; i <= totalPages; i++) {
+                        const btn = document.createElement('button');
+                        btn.textContent = i;
+                        btn.className = i === currentPage ? 'active' : '';
+                        btn.title = `Go to page ${i}`;
+                        btn.addEventListener('click', () => { currentPage = i; renderTable(); });
+                        pagDiv.appendChild(btn);
+                    }
+                }
+                updateBulkActions();
+            }
+
+            // Event listeners for filters
+            document.getElementById('filterMonth').addEventListener('change', function() { filterMonth = this.value; currentPage = 1; renderTable(); });
+            document.getElementById('filterYear').addEventListener('change', function() { filterYear = this.value; currentPage = 1; renderTable(); });
+            document.getElementById('searchInput').addEventListener('input', function() { searchQuery = this.value; currentPage = 1; renderTable(); });
+            document.getElementById('dateFrom').addEventListener('change', function() { dateFrom = this.value; currentPage = 1; renderTable(); });
+            document.getElementById('dateTo').addEventListener('change', function() { dateTo = this.value; currentPage = 1; renderTable(); });
+
+            window.resetFilter = function() {
+                document.getElementById('filterMonth').value = 'all';
+                document.getElementById('filterYear').value = 'all';
+                document.getElementById('searchInput').value = '';
+                document.getElementById('dateFrom').value = '';
+                document.getElementById('dateTo').value = '';
+                filterMonth = 'all'; filterYear = 'all'; searchQuery = ''; dateFrom = ''; dateTo = '';
+                currentPage = 1;
+                renderTable();
+            };
+
+            // Bulk actions
+            window.toggleSelectAll = function(checkbox) {
+                document.querySelectorAll('.invoice-check').forEach(cb => cb.checked = checkbox.checked);
+                updateBulkActions();
+            };
+            window.updateBulkActions = function() {
+                const selected = document.querySelectorAll('.invoice-check:checked');
+                const count = selected.length;
+                document.getElementById('selectedCount').textContent = count + ' selected';
+                document.getElementById('bulkActions').style.display = count > 0 ? 'flex' : 'none';
+            };
+            window.bulkDelete = function() {
+                const selectedIds = Array.from(document.querySelectorAll('.invoice-check:checked')).map(cb => cb.value);
+                if (!selectedIds.length) return;
+                if (!confirm(`Delete ${selectedIds.length} invoice(s)?`)) return;
+                let updated = invoices.filter(i => !selectedIds.includes(i.id));
+                saveUserInvoices(user.id, updated);
+                location.reload();
+            };
+            window.bulkExport = function() {
+                const selectedIds = Array.from(document.querySelectorAll('.invoice-check:checked')).map(cb => cb.value);
+                const selectedInvs = invoices.filter(i => selectedIds.includes(i.id));
+                const blob = new Blob([JSON.stringify(selectedInvs, null, 2)], {type:'application/json'});
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'selected_invoices.json'; a.click();
+            };
+
+            // Inline view modal
+            window.viewInvoice = function(id) {
+                const inv = invoices.find(i => i.id === id);
+                if (!inv) return;
+                const modal = document.getElementById('modalContainer');
+                modal.innerHTML = `
+                    <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
+                        <div class="modal">
+                            <button class="modal-close" onclick="closeModal()">✕</button>
+                            <h2>Invoice ${escHtml(inv.id)}</h2>
+                            <p><strong>Date:</strong> ${escHtml(inv.date)} | <strong>Status:</strong> ${inv.status}</p>
+                            <p><strong>Store:</strong> ${escHtml(inv.shopName)}</p>
+                            <p><strong>Customer:</strong> ${escHtml(inv.customerName || 'N/A')}</p>
+                            <table class="invoice-table">
+                                <thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+                                <tbody>${(inv.items||[]).map(it => `<tr><td>${escHtml(it.desc)}</td><td>${it.qty}</td><td>₹${it.rate}</td><td>₹${it.amount}</td></tr>`).join('')}</tbody>
+                            </table>
+                            <p><strong>Subtotal:</strong> ${inv.subtotal} | <strong>CGST:</strong> ${inv.cgstPercent}% | <strong>SGST:</strong> ${inv.sgstPercent}% | <strong>Cess:</strong> ${inv.cessPercent}%</p>
+                            <p style="font-size:1.5em; font-weight:800;">Grand Total: ${inv.grandTotal}</p>
+                            <p><strong>Notes:</strong> ${escHtml(inv.notes || '—')}</p>
+                            <p><strong>Bank Details:</strong> ${escHtml(inv.bankDetails || '—')}</p>
+                        </div>
+                    </div>`;
+            };
+            window.closeModal = function() { document.getElementById('modalContainer').innerHTML = ''; };
+
+            // Invoice actions
+            window.editInvoice = id => window.location.href = `create-invoice.html?id=${encodeURIComponent(id)}`;
+            window.deleteInvoice = function(id) {
+                if (!confirm(`Delete invoice ${id}?`)) return;
+                const updated = invoices.filter(i => i.id !== id);
+                saveUserInvoices(user.id, updated);
+                location.reload();
+            };
+            window.exportInvoicesJSON = function() {
+                const filtered = getFilteredInvoices();
+                if (!filtered.length) return alert('No invoices to export.');
+                const blob = new Blob([JSON.stringify({ exportedBy: user.username, invoices: filtered }, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `invoices_${user.username}.json`; a.click();
+            };
+            window.exportInvoicesCSV = function() {
+                const filtered = getFilteredInvoices();
+                if (!filtered.length) return alert('No invoices to export.');
+                let csv = 'Invoice#,Date,Store,Status,Total\n';
+                filtered.forEach(inv => {
+                    csv += `"${inv.id}","${inv.date}","${inv.shopName}","${inv.status}","${inv.grandTotal}"\n`;
+                });
+                const blob = new Blob([csv], {type:'text/csv'});
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `invoices_${user.username}.csv`; a.click();
+            };
+            document.getElementById('importInvoicesFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (!data.invoices) return alert('Invalid file.');
+                        let existing = getUserInvoices(user.id);
+                        let added = 0;
+                        data.invoices.forEach(inv => { if (!existing.find(i => i.id === inv.id)) { existing.unshift(inv); added++; } });
+                        saveUserInvoices(user.id, existing);
+                        alert(`✅ ${added} invoices imported.`);
+                        location.reload();
+                    } catch { alert('Error reading file.'); }
+                };
+                reader.readAsText(file);
+            });
+
+            // Top analytics
+            function updateAnalytics() {
+                const customerMap = {};
+                const itemMap = {};
+                invoices.forEach(inv => {
+                    const cust = inv.customerName || 'Unknown';
+                    const rev = parseFloat(String(inv.grandTotal||'0').replace(/[₹,\s]/g,'')) || 0;
+                    customerMap[cust] = (customerMap[cust] || 0) + rev;
+                    if (inv.items) inv.items.forEach(item => {
+                        const name = item.desc || 'Unnamed';
+                        itemMap[name] = (itemMap[name] || 0) + (parseFloat(item.qty)||0);
+                    });
+                });
+                const topCustomers = Object.entries(customerMap).sort((a,b) => b[1]-a[1]).slice(0,5);
+                const topItems = Object.entries(itemMap).sort((a,b) => b[1]-a[1]).slice(0,5);
+                document.getElementById('topCustomers').innerHTML = '<strong>Top Customers (by revenue):</strong><br>' + (topCustomers.length ? topCustomers.map(([n, rev]) => `• ${escHtml(n)}: ₹${rev.toFixed(2)}`).join('<br>') : 'No data');
+                document.getElementById('topItems').innerHTML = '<strong>Top Items (by quantity):</strong><br>' + (topItems.length ? topItems.map(([n, qty]) => `• ${escHtml(n)}: ${qty} sold`).join('<br>') : 'No data');
+            }
+
+            // Admin panel
+            function renderAdminPanel() {
+                const container = document.getElementById('adminPanelContainer');
+                if (!container || !user.isAdmin) return;
+                const users = getUsers();
+                const pending = users.filter(u => u.status === 'pending' && !u.isAdmin);
+                const approved = users.filter(u => u.status === 'approved' && !u.isAdmin);
+                container.innerHTML = `
+                    <div class="admin-card" style="margin-top:20px;">
+                        <div class="admin-card-header"><h3>👑 Admin Dashboard</h3><span class="pending-count">${pending.length} Pending</span></div>
+                        ${pending.length === 0 ? '<div style="padding:30px;text-align:center;">✅ No pending registrations.</div>' : ''}
+                        ${pending.map(u => `
+                            <div class="user-list-item">
+                                <div><strong>${escHtml(u.name)}</strong><br><small>@${escHtml(u.username)} · ${escHtml(u.email)}</small></div>
+                                <div><button class="btn-approve" onclick="approveUser('${u.id}')" title="Approve this user">✅ Approve</button><button class="btn-reject" onclick="rejectUser('${u.id}')" title="Reject and remove">❌ Reject</button></div>
+                            </div>`).join('')}
+                        ${approved.length ? `
+                            <details class="approved-list" style="padding:12px 24px;">
+                                <summary>📋 Approved Users (${approved.length})</summary>
+                                ${approved.map(u => `
+                                    <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0;">
+                                        <span>• ${escHtml(u.name)} (@${escHtml(u.username)})</span>
+                                        <div>
+                                            <button class="btn-edit-user" onclick="changeUserPassword('${u.id}')" title="Change password">🔑 Change Password</button>
+                                            <button class="btn-reject" onclick="deleteUser('${u.id}')" title="Delete user">🗑️ Delete</button>
+                                        </div>
+                                    </div>`).join('')}
+                            </details>` : ''}
+                    </div>`;
+                container.style.display = 'block';
+            }
+            window.toggleAdminPanel = function() {
+                const panel = document.getElementById('adminPanelContainer');
+                if (panel.style.display === 'none' || !panel.style.display) renderAdminPanel();
+                else panel.style.display = 'none';
+            };
+            window.approveUser = function(uid) {
+                let users = getUsers(); const idx = users.findIndex(u => u.id === uid);
+                if (idx !== -1 && users[idx].status === 'pending') {
+                    users[idx].status = 'approved'; saveUsers(users); renderAdminPanel(); updateUserCount(); updateAdminBadge();
+                    alert(`✅ Approved: ${users[idx].name}`);
+                }
+            };
+            window.rejectUser = function(uid) {
+                let users = getUsers(); const idx = users.findIndex(u => u.id === uid);
+                if (idx !== -1 && users[idx].status === 'pending') {
+                    if (!confirm(`Reject ${users[idx].name}?`)) return;
+                    users.splice(idx, 1); saveUsers(users); renderAdminPanel(); updateUserCount(); updateAdminBadge();
+                }
+            };
+            window.changeUserPassword = function(uid) {
+                let users = getUsers(); const u = users.find(u => u.id === uid);
+                if (!u) return;
+                const newPwd = prompt(`Enter new password for ${u.name}:`);
+                if (newPwd && newPwd.length >= 6) { u.password = newPwd; saveUsers(users); alert('Password updated.'); }
+                else if (newPwd) alert('Password must be at least 6 characters.');
+            };
+            window.deleteUser = function(uid) {
+                let users = getUsers(); const u = users.find(u => u.id === uid);
+                if (!u || !confirm(`Permanently delete ${u.name} and all their data?`)) return;
+                localStorage.removeItem(`pos_invoices_${uid}`);
+                localStorage.removeItem(`shop_details_${uid}`);
+                users = users.filter(u => u.id !== uid);
+                saveUsers(users);
+                renderAdminPanel();
+                updateUserCount();
+                updateAdminBadge();
+                alert(`Deleted user ${u.name}.`);
+            };
+
+            function updateAdminBadge() {
+                if (!user.isAdmin) return;
+                const users = getUsers();
+                const pending = users.filter(u => u.status === 'pending' && !u.isAdmin);
+                const badge = document.getElementById('adminNotificationBadge');
+                if (badge) {
+                    badge.textContent = pending.length;
+                    badge.style.display = pending.length ? 'flex' : 'none';
+                }
+            }
+
+            // Export/Import account
+            window.exportAccount = function() {
+                const users = getUsers();
+                const currentUserData = users.find(u => u.id === user.id);
+                const shop = localStorage.getItem(`shop_details_${user.id}`);
+                const invs = getUserInvoices(user.id);
+                const pkg = { account: currentUserData, shopDetails: shop ? JSON.parse(shop) : null, invoices: invs };
+                const blob = new Blob([JSON.stringify(pkg, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `pos_backup_${user.username}.json`; a.click();
+            };
+            document.getElementById('hiddenImportFile').addEventListener('change', function(e) {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (!data.account) return alert('Invalid backup.');
+                        let users = getUsers();
+                        const idx = users.findIndex(u => u.id === data.account.id || u.username === data.account.username);
+                        if (idx > -1) users[idx] = { ...users[idx], ...data.account, status: data.account.status || 'approved' };
+                        else { data.account.status = data.account.status || 'approved'; users.push(data.account); }
+                        saveUsers(users);
+                        if (data.shopDetails) localStorage.setItem(`shop_details_${data.account.id}`, JSON.stringify(data.shopDetails));
+                        if (data.invoices) localStorage.setItem(`pos_invoices_${data.account.id}`, JSON.stringify(data.invoices));
+                        alert('Imported! Please re-login.');
+                        logout();
+                    } catch { alert('Error.'); }
+                };
+                reader.readAsText(file);
+            });
+
+            window.logout = function() {
+                sessionStorage.removeItem('pos_current_user');
+                localStorage.removeItem('pos_remembered');
+                window.location.href = 'login.html';
+            };
+
+            // Initial render
+            if (user.isAdmin) renderAdminPanel();
+            renderTable();
+            drawChart();
+            updateAnalytics();
+            updateAdminBadge();
+            window.addEventListener('resize', drawChart);
+        })();
+    </script>
+</body>
+</html>

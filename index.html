@@ -2,1778 +2,626 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>POS Retail Pro | Admin Approval Billing System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Retail Pro | Smart Billing & Admin Approval Platform</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #10b981;
-            --primary-hover: #059669;
-            --bg-main: #f8fafc;
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-lighter: #5eead4;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --accent-light: #fbbf24;
+            --bg: #f8fafc;
+            --bg-alt: #f1f5f9;
             --surface: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
             --border: #e2e8f0;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
+            --border-light: #f1f5f9;
+            --radius-xs: 6px;
+            --radius-sm: 10px;
+            --radius: 16px;
+            --radius-lg: 22px;
+            --radius-xl: 28px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.10);
+            --shadow-xl: 0 30px 70px rgba(0, 0, 0, 0.12);
+            --gradient-primary: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #0f766e 100%);
+            --gradient-hero: linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 25%, #e0f2fe 50%, #fefce8 75%, #f8fafc 100%);
+            --gradient-cta: linear-gradient(135deg, #0d9488, #14b8a6, #0f766e);
+            --gradient-accent: linear-gradient(135deg, #f59e0b, #fbbf24, #d97706);
+            --gradient-card: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #111827 100%);
         }
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
         body {
-            background: var(--bg-main);
-            color: var(--text-main);
-            padding: 30px 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
         }
 
-        /* Auth Modal Styles */
-        .auth-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+        @keyframes pulse-soft { 0%, 100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.3); } 50% { box-shadow: 0 0 0 18px rgba(13, 148, 136, 0); } }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 14px 28px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 14px;
+            position: sticky; top: 0; z-index: 1000;
+            animation: fadeInDown 0.6s ease-out;
         }
-        .auth-card {
-            background: white;
-            max-width: 480px;
-            width: 90%;
-            padding: 36px 32px;
-            border-radius: 32px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            max-height: 90vh;
-            overflow-y: auto;
+        .logo-group { display: flex; align-items: center; gap: 10px; }
+        .logo-icon {
+            width: 44px; height: 44px;
+            background: var(--gradient-primary); border-radius: var(--radius-xs);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 23px; color: white; font-weight: 800;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
         }
-        .auth-icon {
-            font-size: 52px;
-            background: #ecfdf5;
-            width: 85px;
-            height: 85px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 60px;
-            margin: 0 auto 16px;
-            color: var(--primary);
+        .logo-text { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); }
+        .logo-text span { color: var(--primary); }
+        .nav-links { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .nav-link {
+            background: transparent; border: none; color: var(--text-secondary);
+            padding: 9px 18px; border-radius: 40px; font-weight: 500; cursor: pointer;
+            transition: all 0.2s; font-size: 14px; text-decoration: none;
         }
-        .auth-card h2 {
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-align: center;
+        .nav-link:hover { background: #f1f5f9; color: var(--text); }
+        .btn-nav {
+            background: transparent; border: 2px solid var(--border); color: var(--text);
+            padding: 9px 22px; border-radius: 40px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; font-size: 14px; text-decoration: none;
         }
-        .auth-card p {
-            font-size: 14px;
-            color: var(--text-muted);
-            text-align: center;
-            margin-bottom: 28px;
+        .btn-nav:hover { border-color: var(--primary); background: #f0fdfa; }
+        .btn-nav-primary {
+            background: var(--gradient-primary); color: white; border: none;
+            font-weight: 600; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.25);
         }
-        .input-group {
-            margin-bottom: 20px;
+        .btn-nav-primary:hover { box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4); transform: translateY(-1px); }
+
+        .hero-section { padding: 90px 28px 70px; text-align: center; max-width: 1000px; margin: 0 auto; position: relative; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #ecfdf5; color: var(--primary-dark); font-weight: 600; font-size: 13px;
+            padding: 9px 20px; border-radius: 40px; margin-bottom: 28px;
+            border: 1px solid #a7f3d0; animation: fadeInUp 0.7s ease-out;
         }
-        .input-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-main);
-            display: block;
-            margin-bottom: 6px;
+        .hero-badge .dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse-soft 2s infinite; }
+        .hero-title {
+            font-size: 58px; font-weight: 900; margin-bottom: 22px; letter-spacing: -1.8px;
+            line-height: 1.12; animation: fadeInUp 0.8s 0.1s ease-out forwards; opacity: 0;
+            color: var(--text);
         }
-        .input-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-md);
-            font-size: 15px;
-            outline: none;
-            transition: 0.2s;
+        .hero-title .highlight { background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle {
+            font-size: 20px; color: var(--text-secondary); margin-bottom: 40px; max-width: 620px;
+            margin-left: auto; margin-right: auto; line-height: 1.7;
+            animation: fadeInUp 0.8s 0.2s ease-out forwards; opacity: 0;
         }
-        .input-group input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        .hero-cta-group {
+            display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+            animation: fadeInUp 0.8s 0.3s ease-out forwards; opacity: 0;
         }
-        .auth-btn {
-            background: var(--primary);
-            color: white;
-            font-weight: 700;
-            padding: 13px;
-            width: 100%;
-            border: none;
-            border-radius: var(--radius-md);
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 8px;
+        .btn-cta {
+            padding: 15px 36px; border-radius: 50px; font-weight: 700; font-size: 15px;
+            cursor: pointer; border: none; transition: all 0.3s; letter-spacing: -0.3px;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
         }
-        .auth-btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
+        .btn-cta-primary {
+            background: var(--gradient-cta); color: white; box-shadow: 0 8px 28px rgba(13, 148, 136, 0.35);
         }
-        .toggle-auth {
-            margin-top: 20px;
-            font-size: 14px;
-            color: var(--primary);
-            cursor: pointer;
-            text-align: center;
-            font-weight: 600;
+        .btn-cta-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(13, 148, 136, 0.45); }
+        .btn-cta-outline { background: white; border: 2px solid var(--border); color: var(--text); }
+        .btn-cta-outline:hover { border-color: var(--primary); background: #f9fafb; transform: translateY(-2px); }
+
+        .hero-visual { max-width: 750px; margin: 50px auto 0; animation: scaleIn 1s 0.4s ease-out forwards; opacity: 0; position: relative; }
+        .hero-mockup {
+            background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border); padding: 20px 24px; text-align: left;
         }
-        .forgot-link {
-            text-align: right;
-            font-size: 12px;
-            margin-top: -8px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            color: var(--primary);
-            display: inline-block;
-            width: 100%;
-            text-align: right;
+        .mockup-header { display: flex; gap: 8px; margin-bottom: 16px; }
+        .mockup-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .mockup-dot.red { background: #ef4444; }
+        .mockup-dot.yellow { background: #f59e0b; }
+        .mockup-dot.green { background: #10b981; }
+        .mockup-row { display: flex; gap: 14px; margin-bottom: 12px; }
+        .mockup-card { flex: 1; background: #f9fafb; border-radius: var(--radius-sm); padding: 14px 16px; border: 1px solid var(--border-light); }
+        .mockup-card .label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); }
+        .mockup-card .value { font-size: 18px; font-weight: 800; color: var(--text); margin-top: 4px; }
+        .mockup-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .mockup-table th { background: #f1f5f9; padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text-secondary); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .mockup-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); }
+        .mockup-table .amount { font-weight: 700; color: var(--primary-dark); text-align: right; }
+
+        .stats-row { display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; padding: 40px 24px 60px; max-width: 900px; margin: 0 auto; }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-size: 44px; font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: -1px;
         }
-        .error-msg {
-            background: #fef2f2;
-            color: #ef4444;
-            padding: 10px 14px;
-            border-radius: 40px;
-            font-size: 13px;
-            margin-top: 12px;
-            text-align: center;
-        }
-        .success-msg {
-            background: #dcfce7;
-            color: #15803d;
-            padding: 10px 14px;
-            border-radius: 40px;
-            font-size: 13px;
-            margin-top: 12px;
-            text-align: center;
-        }
-        .warning-msg {
-            background: #fffbeb;
-            color: #b45309;
-            padding: 10px 14px;
-            border-radius: 40px;
-            font-size: 13px;
-            margin-top: 12px;
-            text-align: center;
-        }
-        .checkbox-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 12px 0;
-        }
-        .checkbox-row input {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
+        .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1.2px; margin-top: 4px; }
+        .stat-divider { width: 1px; background: var(--border); align-self: stretch; }
+
+        .section { padding: 80px 24px; }
+        .section-alt { background: var(--surface); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
+        .section-label { text-align: center; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: var(--primary); margin-bottom: 12px; }
+        .section-title { text-align: center; font-size: 38px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; color: var(--text); }
+        .section-subtitle { text-align: center; font-size: 17px; color: var(--text-secondary); max-width: 550px; margin: 0 auto 55px; line-height: 1.7; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px; max-width: 1150px; margin: 0 auto; }
+        .feature-card { background: var(--gradient-card); padding: 38px 30px; border-radius: var(--radius-lg); border: 1px solid var(--border-light); transition: all 0.35s; position: relative; overflow: hidden; }
+        .feature-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-primary); opacity: 0; transition: opacity 0.35s; }
+        .feature-card:hover { box-shadow: var(--shadow-lg); border-color: #cffafe; transform: translateY(-5px); }
+        .feature-card:hover::after { opacity: 1; }
+        .feature-icon-box { width: 56px; height: 56px; background: #ecfdf5; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 22px; transition: transform 0.3s; }
+        .feature-card:hover .feature-icon-box { transform: scale(1.1); }
+        .feature-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.3px; }
+        .feature-card p { color: var(--text-secondary); font-size: 15px; line-height: 1.7; }
+
+        .steps-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px; max-width: 1000px; margin: 0 auto; }
+        .step-card { text-align: center; padding: 32px 20px; position: relative; }
+        .step-number { width: 60px; height: 60px; background: var(--gradient-primary); color: white; font-size: 26px; font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(13, 148, 136, 0.3); }
+        .step-card h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .step-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+        .step-connector { display: none; }
+        @media (min-width: 769px) {
+            .step-connector { display: block; position: absolute; top: 62px; right: -30px; width: 60px; height: 2px; background: var(--border); }
+            .step-card:last-child .step-connector { display: none; }
         }
 
-        /* Admin Panel Styles */
-        .admin-panel {
-            background: white;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            margin-top: 24px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-        .admin-header {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            color: white;
-            padding: 16px 24px;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .pending-badge {
-            background: #f59e0b;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .approve-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 6px 18px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 0 4px;
-            font-size: 12px;
-            transition: 0.2s;
-        }
-        .approve-btn:hover {
-            background: #059669;
-            transform: translateY(-1px);
-        }
-        .reject-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 6px 18px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 0 4px;
-            font-size: 12px;
-            transition: 0.2s;
-        }
-        .reject-btn:hover {
-            background: #dc2626;
-            transform: translateY(-1px);
-        }
-        .user-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-            transition: background 0.2s;
-        }
-        .user-row:hover {
-            background: #f8fafc;
-        }
-        .user-info strong {
-            display: block;
-            font-size: 15px;
-            color: var(--text-main);
-        }
-        .user-info small {
-            color: var(--text-muted);
-            font-size: 12px;
-        }
-        .status-approved {
-            color: #10b981;
-            font-weight: 600;
-            background: #dcfce7;
-            padding: 2px 12px;
-            border-radius: 30px;
-            font-size: 12px;
-        }
-        .status-pending {
-            color: #f59e0b;
-            font-weight: 600;
-            background: #fef3c7;
-            padding: 2px 12px;
-            border-radius: 30px;
-            font-size: 12px;
-        }
-        .notification-banner {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 12px 20px;
-            margin-bottom: 16px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 14px;
-        }
+        .pricing-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 28px; max-width: 1000px; margin: 0 auto; align-items: stretch; }
+        .pricing-card { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 36px 30px; flex: 1; min-width: 270px; max-width: 320px; text-align: center; transition: all 0.35s; position: relative; }
+        .pricing-card.featured { border: 2px solid var(--primary); box-shadow: var(--shadow-lg); transform: scale(1.03); }
+        .pricing-card.featured .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--gradient-accent); color: white; padding: 6px 20px; border-radius: 30px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+        .pricing-card:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
+        .pricing-card.featured:hover { transform: scale(1.04) translateY(-4px); }
+        .price { font-size: 46px; font-weight: 900; color: var(--primary-dark); margin: 18px 0; letter-spacing: -1px; }
+        .price span { font-size: 16px; font-weight: 500; color: var(--text-muted); }
+        .pricing-features { list-style: none; margin: 24px 0; text-align: left; }
+        .pricing-features li { padding: 7px 0; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+        .pricing-features li::before { content: "✓"; color: var(--primary); font-weight: 700; font-size: 16px; }
 
-        /* Main POS Layout */
-        .pos-app-wrapper {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: none;
-            flex-direction: column;
-            gap: 24px;
-        }
-        .main-dashboard {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-        .pos-main-content {
-            flex: 1;
-            min-width: 280px;
-        }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; max-width: 1050px; margin: 0 auto; }
+        .testimonial-card { background: #f9fafb; padding: 28px; border-radius: var(--radius); border: 1px solid var(--border-light); transition: all 0.3s; }
+        .testimonial-card:hover { box-shadow: var(--shadow); border-color: #d1fae5; }
+        .testimonial-card .quote { font-size: 15px; font-style: italic; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.7; }
+        .testimonial-card .author-row { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; }
+        .author-name { font-weight: 700; color: var(--text); font-size: 14px; }
+        .author-role { font-size: 12px; color: var(--text-muted); }
+        .stars { color: #f59e0b; font-size: 14px; margin-bottom: 8px; }
 
-        .pos-container {
-            background: var(--surface);
-            padding: 32px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-        .shop-header-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            padding-bottom: 24px;
-            border-bottom: 2px dashed var(--border);
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-        .logo-upload-zone {
-            width: 90px;
-            height: 90px;
-            background: #f0fdf4;
-            border: 2px dashed var(--primary);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        .logo-upload-zone img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: none;
-        }
-        .upload-icon {
-            font-size: 24px;
-            color: var(--primary);
-            text-align: center;
-        }
-        .shop-details-pane {
-            flex: 1;
-            min-width: 200px;
-        }
-        .shop-details-pane input {
-            width: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            margin-bottom: 5px;
-        }
-        .shop-details-pane input.shop-name {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-        .shop-details-pane input.shop-info {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-        .bill-meta {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-        .meta-card {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            flex: 1;
-        }
-        .meta-card label {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            display: block;
-        }
-        .meta-card input,
-        .meta-card select {
-            font-size: 14px;
-            font-weight: 600;
-            background: transparent;
-            border: none;
-            outline: none;
-            width: 100%;
-            margin-top: 4px;
-        }
+        .faq-container { max-width: 750px; margin: 0 auto; }
+        .faq-item { background: white; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 22px 26px; margin-bottom: 14px; cursor: pointer; transition: all 0.25s; }
+        .faq-item:hover { border-color: var(--primary-lighter); box-shadow: var(--shadow-sm); }
+        .faq-item h4 { font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .faq-item .answer { margin-top: 12px; color: var(--text-secondary); font-size: 14px; line-height: 1.7; display: none; }
+        .faq-item.open .answer { display: block; }
+        .faq-item .icon { transition: transform 0.3s; font-size: 20px; color: var(--primary); }
+        .faq-item.open .icon { transform: rotate(45deg); }
 
-        .gst-manual-section {
-            background: #f0fdf4;
-            border: 1px solid #c6f6d5;
-            border-radius: var(--radius-md);
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-        .gst-heading {
-            font-size: 14px;
-            font-weight: 700;
-            color: #065f46;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .gst-input-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-end;
-        }
-        .gst-field {
-            flex: 1;
-            min-width: 140px;
-        }
-        .gst-field label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #047857;
-            display: block;
-            margin-bottom: 6px;
-        }
-        .gst-field input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1.5px solid #c6f6d5;
-            border-radius: var(--radius-sm);
-            font-size: 15px;
-            font-weight: 600;
-            background: white;
-            outline: none;
-        }
-        .apply-gst-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 22px;
-            border-radius: var(--radius-sm);
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .table-wrapper {
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            overflow-x: auto;
-            margin-bottom: 20px;
-        }
-        .invoice-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px;
-        }
-        .invoice-table th {
-            background: #f8fafc;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 14px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-        .invoice-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border);
-        }
-        .invoice-table input {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            outline: none;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: var(--radius-sm);
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        .btn-secondary {
-            background: #f1f5f9;
-            color: var(--text-main);
-            border: 1px solid var(--border);
-        }
-        .btn-danger {
-            background: #fee2e2;
-            color: #ef4444;
-            padding: 6px 12px;
-        }
-        .btn-success {
-            background: #2563eb;
-            color: white;
-        }
-        .btn-amber {
-            background: #f59e0b;
-            color: white;
-        }
-        .btn-amber:hover {
-            background: #d97706;
-        }
-        .btn-outline {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-        }
-        .btn-outline:hover {
-            background: #ecfdf5;
-        }
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-        .billing-summary-simple {
-            background: #f8fafc;
-            padding: 24px;
-            border-radius: var(--radius-md);
-            margin-top: 24px;
-        }
-        .summary-block {
-            max-width: 400px;
-            margin-left: auto;
-        }
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 15px;
-        }
-        .grand-total-row {
-            font-size: 28px;
-            font-weight: 800;
-            border-top: 2px solid var(--text-main);
-            padding-top: 16px;
-            margin-top: 12px;
-            color: var(--primary);
-        }
-        .global-actions {
-            margin-top: 24px;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .report-card {
-            background: var(--surface);
-            padding: 28px;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            margin-top: 24px;
-        }
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
-        }
-        .badge-paid {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        .badge-draft {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-        .badge-pending {
-            background: #fef3c7;
-            color: #b45309;
-        }
-        .logout-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            padding: 12px 24px;
-            border-radius: 60px;
-            box-shadow: var(--shadow);
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .user-greeting {
-            background: #ecfdf5;
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: #047857;
-            font-size: 14px;
-        }
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 16px;
-            background: #f8fafc;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border);
-        }
-        .filter-row label {
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .filter-row select {
-            padding: 8px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            font-weight: 500;
-            background: white;
-            cursor: pointer;
-            outline: none;
-        }
-        .filter-row select:focus {
-            border-color: var(--primary);
-        }
-        .total-summary-card {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border: 2px solid var(--primary);
-            border-radius: var(--radius-md);
-            padding: 18px 24px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .total-summary-card .total-label {
-            font-size: 14px;
-            font-weight: 700;
-            color: #065f46;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .total-summary-card .total-amount {
-            font-size: 32px;
-            font-weight: 800;
-            color: #059669;
-        }
-        .total-summary-card .invoice-count {
-            font-size: 13px;
-            color: #047857;
-            font-weight: 500;
-        }
-        .import-export-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .divider {
-            border: none;
-            border-top: 1px solid var(--border);
-            margin: 8px 0;
-        }
-        .cross-device-note {
-            font-size: 11px;
-            color: #64748b;
-            background: #fffbeb;
-            padding: 8px 14px;
-            border-radius: 20px;
-            display: inline-block;
-            border: 1px solid #fde68a;
-        }
-        @media print {
-            .auth-overlay,
-            .logout-bar,
-            .btn,
-            .global-actions,
-            .admin-panel,
-            .notification-banner,
-            .filter-row,
-            .total-summary-card,
-            .import-export-row,
-            .cross-device-note,
-            .apply-gst-btn {
-                display: none !important;
-            }
-        }
-        @media (max-width: 700px) {
-            .pos-container {
-                padding: 20px;
-            }
-            .gst-input-row {
-                flex-direction: column;
-            }
-            .total-summary-card .total-amount {
-                font-size: 24px;
-            }
-            .logout-bar {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-        }
+        .cta-banner { background: var(--gradient-dark); padding: 80px 24px; text-align: center; color: white; position: relative; overflow: hidden; }
+        .cta-banner::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, transparent 60%); animation: float 8s ease-in-out infinite; }
+        .cta-banner h2 { font-size: 36px; font-weight: 900; margin-bottom: 14px; position: relative; z-index: 1; }
+        .cta-banner p { font-size: 17px; color: #cbd5e1; margin-bottom: 30px; position: relative; z-index: 1; }
+        .cta-banner .btn-cta-primary { position: relative; z-index: 1; }
 
-        .blink {
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-            100% {
-                opacity: 1;
-            }
+        .footer { background: #0f172a; color: #94a3b8; padding: 60px 28px 30px; }
+        .footer-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 36px; margin-bottom: 40px; }
+        .footer-col h5 { color: white; font-size: 14px; font-weight: 700; margin-bottom: 14px; letter-spacing: 0.5px; }
+        .footer-col a { display: block; color: #94a3b8; text-decoration: none; font-size: 13px; margin-bottom: 8px; transition: color 0.2s; cursor: pointer; }
+        .footer-col a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid #1e293b; padding-top: 24px; text-align: center; font-size: 12px; max-width: 1100px; margin: 0 auto; color: #64748b; }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 36px; }
+            .hero-subtitle { font-size: 16px; }
+            .section-title { font-size: 28px; }
+            .stats-row { gap: 24px; }
+            .stat-number { font-size: 32px; }
+            .navbar { padding: 12px 16px; }
+            .pricing-grid { flex-direction: column; align-items: center; }
+            .pricing-card { max-width: 100%; }
+            .pricing-card.featured { transform: none; }
+            .hero-visual { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- AUTHENTICATION MODAL -->
-    <div id="authOverlay" class="auth-overlay">
-        <div class="auth-card" id="authCard"></div>
-    </div>
-
-    <!-- MAIN APP -->
-    <div id="appWrapper" class="pos-app-wrapper">
-        <div class="logout-bar">
-            <div class="user-greeting" id="userGreeting">👤 Welcome</div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                <span class="cross-device-note" title="Export your account data to use on another device">📱 Cross-device: Use Export/Import below</span>
-                <button class="btn btn-outline btn-sm" id="exportAccountBtn" onclick="exportFullAccountData()" title="Export all your data for use on another device or mobile">📦 Export My Data</button>
-                <button class="btn btn-outline btn-sm" id="importAccountBtn" onclick="triggerImportAccountData()" title="Import previously exported data from another device">📥 Import Data</button>
-                <input type="file" id="importAccountFileInput" accept=".json" style="display:none" onchange="importFullAccountData(event)">
-                <button class="btn btn-secondary btn-sm" id="adminPanelBtn" onclick="toggleAdminPanel()" style="display:none;">👑 Admin Panel</button>
-                <button class="btn btn-secondary btn-sm" onclick="logoutUser()">🚪 Sign Out</button>
-            </div>
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar">
+        <div class="logo-group">
+            <div class="logo-icon">🧾</div>
+            <div class="logo-text">POS<span>Retail</span>Pro</div>
         </div>
+        <div class="nav-links">
+            <a href="#features" class="nav-link">Features</a>
+            <a href="#how-it-works" class="nav-link">How It Works</a>
+            <a href="#pricing" class="nav-link">Pricing</a>
+            <a href="#testimonials" class="nav-link">Testimonials</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+            <a href="login.html" class="btn-nav">Sign In</a>
+            <a href="login.html?mode=register" class="btn-nav btn-nav-primary">Get Started Free</a>
+        </div>
+    </nav>
 
-        <!-- Admin Approval Panel (visible only to admin) -->
-        <div id="adminPanelContainer" style="display: none;"></div>
-
-        <div class="main-dashboard">
-            <div class="pos-main-content">
-                <div class="pos-container" id="printable-pos">
-                    <div class="shop-header-wrapper">
-                        <div class="logo-upload-zone" onclick="triggerLogoUpload()">
-                            <div id="logoPlaceholder">
-                                <div class="upload-icon">📷</div>
-                                <div style="font-size:10px;">Logo</div>
-                            </div>
-                            <img id="storeLogoPreview" alt="Logo">
-                        </div>
-                        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="loadLogo(event)">
-                        <div class="shop-details-pane">
-                            <input type="text" class="shop-name" id="shopName" placeholder="YOUR STORE NAME">
-                            <input type="text" class="shop-info" id="shopAddress" placeholder="Address, City, State - ZIP">
-                            <input type="text" class="shop-info" id="shopContact" placeholder="Phone | GSTIN">
-                        </div>
+    <!-- ==================== HERO ==================== -->
+    <section class="hero-section">
+        <div class="hero-badge">
+            <span class="dot"></span> Trusted by 500+ Retailers Across India
+        </div>
+        <h1 class="hero-title">
+            The Smart <span class="highlight">POS Billing</span> Platform With <span class="highlight">Admin Control</span>
+        </h1>
+        <p class="hero-subtitle">
+            Professional invoicing with manual GST control, admin‑approved user access, and seamless cross‑device sync. Built for modern Indian retail stores that demand simplicity and reliability.
+        </p>
+        <div class="hero-cta-group">
+            <a href="login.html?mode=register" class="btn-cta btn-cta-primary">
+                🚀 Start Free Account →
+            </a>
+            <a href="login.html" class="btn-cta btn-cta-outline">
+                🔐 I Already Have an Account
+            </a>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-mockup">
+                <div class="mockup-header">
+                    <div class="mockup-dot red"></div>
+                    <div class="mockup-dot yellow"></div>
+                    <div class="mockup-dot green"></div>
+                </div>
+                <div class="mockup-row">
+                    <div class="mockup-card">
+                        <div class="label">Invoice #</div>
+                        <div class="value">INV-2025-0042</div>
                     </div>
-
-                    <div class="bill-meta">
-                        <div class="meta-card"><label>Invoice #</label><input type="text" id="invoiceId" readonly></div>
-                        <div class="meta-card"><label>Date</label><input type="date" id="invoiceDate"></div>
-                        <div class="meta-card"><label>Status</label><select id="invoiceStatus"><option>Paid</option><option>Draft</option><option>Pending</option></select></div>
+                    <div class="mockup-card">
+                        <div class="label">Grand Total</div>
+                        <div class="value" style="color:var(--primary-dark);">₹12,450.00</div>
                     </div>
-
-                    <div class="gst-manual-section">
-                        <div class="gst-heading"><span>⚙️</span> MANUAL GST CALCULATION</div>
-                        <div class="gst-input-row">
-                            <div class="gst-field"><label>CGST (%)</label><input type="number" id="cgstPercent" step="any" placeholder="e.g., 2.5" value="2.5"></div>
-                            <div class="gst-field"><label>SGST (%)</label><input type="number" id="sgstPercent" step="any" placeholder="e.g., 2.5" value="2.5"></div>
-                            <div class="gst-field"><label>Additional Cess (%)</label><input type="number" id="cessPercent" step="any" placeholder="Optional" value="0"></div>
-                            <button class="apply-gst-btn" onclick="calculateTotal()">⟳ Recalculate GST</button>
-                        </div>
-                    </div>
-
-                    <div class="table-wrapper">
-                        <table class="invoice-table">
-                            <thead>
-                                <tr><th>Product / Service</th><th style="width:100px;">Qty</th><th style="width:120px;">Rate (₹)</th><th style="width:120px;">Amount</th><th style="width:50px;"></th></tr>
-                            </thead>
-                            <tbody id="itemsTableBody">
-                                <tr>
-                                    <td><input type="text" placeholder="Item description" class="item-desc"></td>
-                                    <td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td>
-                                    <td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td>
-                                    <td class="item-amount" style="font-weight:600;">0.00</td>
-                                    <td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style="display:flex; gap:10px; margin-bottom:20px;">
-                        <button class="btn btn-secondary" onclick="addRow()">+ Add Item</button>
-                        <button class="btn btn-secondary" onclick="newInvoiceToken()">🔄 New Token</button>
-                    </div>
-
-                    <div class="billing-summary-simple">
-                        <div class="summary-block">
-                            <div class="summary-row"><span>Subtotal</span><span id="subtotalVal">₹0.00</span></div>
-                            <div class="summary-row"><span>CGST (<span id="cgstPercentDisplay">2.5</span>%)</span><span id="cgstVal">₹0.00</span></div>
-                            <div class="summary-row"><span>SGST (<span id="sgstPercentDisplay">2.5</span>%)</span><span id="sgstVal">₹0.00</span></div>
-                            <div class="summary-row" id="cessRow" style="display: none;"><span>Cess (<span id="cessPercentDisplay">0</span>%)</span><span id="cessVal">₹0.00</span></div>
-                            <div class="summary-row grand-total-row"><span>Grand Total</span><span id="grandTotalVal">₹0.00</span></div>
-                        </div>
-                    </div>
-
-                    <div class="global-actions">
-                        <span style="color:var(--text-muted); font-size:12px;">Admin Approval System | Admin: ANIV6536</span>
-                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                            <button class="btn btn-success" onclick="saveCurrentInvoice()">💾 Save Invoice</button>
-                            <button class="btn btn-secondary" onclick="shareBill()">📤 Share</button>
-                            <button class="btn btn-primary" onclick="printInvoice()">🖨️ Print / PDF</button>
-                        </div>
+                    <div class="mockup-card">
+                        <div class="label">Status</div>
+                        <div class="value" style="color:#059669;">✅ Paid</div>
                     </div>
                 </div>
+                <table class="mockup-table">
+                    <thead><tr><th>Product</th><th>Qty</th><th>Rate</th><th class="amount">Amount</th></tr></thead>
+                    <tbody>
+                        <tr><td>Organic Wheat</td><td>5</td><td>₹240</td><td class="amount">₹1,200</td></tr>
+                        <tr><td>Basmati Rice</td><td>10</td><td>₹180</td><td class="amount">₹1,800</td></tr>
+                        <tr><td>Sunflower Oil</td><td>3</td><td>₹450</td><td class="amount">₹1,350</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
-                <!-- 📋 INVOICE LEDGER WITH FILTER & TOTAL -->
-                <div class="report-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
-                        <h2 style="font-size:18px; margin:0;">📋 Invoice Ledger</h2>
-                        <div class="import-export-row">
-                            <button class="btn btn-outline btn-sm" onclick="exportInvoicesToJSON()" title="Export invoices as JSON file">📤 Export Invoices</button>
-                            <button class="btn btn-outline btn-sm" onclick="triggerImportInvoices()" title="Import invoices from JSON file">📥 Import Invoices</button>
-                            <input type="file" id="importInvoicesFileInput" accept=".json" style="display:none" onchange="importInvoicesFromJSON(event)">
-                        </div>
+    <!-- ==================== STATS (DYNAMIC) ==================== -->
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-number" id="statInvoices">0</div>
+            <div class="stat-label">Invoices Created</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <div class="stat-number" id="statStores">0</div>
+            <div class="stat-label">Active Stores</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <div class="stat-number" id="statUptime">99.9%</div>
+            <div class="stat-label">Uptime</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+            <div class="stat-number" id="statAccess">24/7</div>
+            <div class="stat-label">Access Anywhere</div>
+        </div>
+    </div>
+
+    <!-- ==================== FEATURES ==================== -->
+    <section class="section section-alt" id="features">
+        <div class="section-label">Core Features</div>
+        <h2 class="section-title">Everything Your Store Needs</h2>
+        <p class="section-subtitle">Powerful tools designed specifically for Indian retail — from GST billing to admin oversight.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon-box">📋</div>
+                <h3>Manual GST Control</h3>
+                <p>Set CGST, SGST, and Cess percentages manually for every invoice. Full control over tax calculations with instant recalculations at the click of a button.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">👑</div>
+                <h3>Admin Approval System</h3>
+                <p>New users request access. Admins approve or reject with one click. No unauthorized logins — you decide exactly who enters your billing system.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">📱</div>
+                <h3>Cross‑Device Ready</h3>
+                <p>Export your full account once. Import on any laptop, desktop, or mobile browser. One account works everywhere — no extra setup or sync required.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">📊</div>
+                <h3>Invoice Ledger & Analytics</h3>
+                <p>Filter invoices by month and year. See total revenue at a glance. Export or import your invoice data anytime for backup or migration.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">🖨️</div>
+                <h3>Print & Share Invoices</h3>
+                <p>Professional print‑ready invoices with your store logo. Share directly via WhatsApp or save as PDF. Brand every bill your store sends out.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon-box">🔒</div>
+                <h3>100% Private & Secure</h3>
+                <p>All data stored locally in your browser. No server, no cloud, no third‑party access. Your business data stays completely private and under your control.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== HOW IT WORKS ==================== -->
+    <section class="section" id="how-it-works">
+        <div class="section-label">Simple Process</div>
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Get started in under 2 minutes — no downloads, no installations, no credit card.</p>
+        <div class="steps-container">
+            <div class="step-card" style="position:relative;">
+                <div class="step-number">1</div>
+                <h4>Create Account</h4>
+                <p>Fill in your basic details and submit. Your registration request is sent to the admin for approval.</p>
+                <div class="step-connector"></div>
+            </div>
+            <div class="step-card" style="position:relative;">
+                <div class="step-number">2</div>
+                <h4>Admin Approves</h4>
+                <p>The admin reviews your request and approves your account. You'll be notified immediately.</p>
+                <div class="step-connector"></div>
+            </div>
+            <div class="step-card" style="position:relative;">
+                <div class="step-number">3</div>
+                <h4>Start Billing</h4>
+                <p>Login from any device. Create professional invoices, manage GST, and track your daily revenue.</p>
+                <div class="step-connector"></div>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h4>Export & Sync</h4>
+                <p>Use Export/Import to move your account between devices. All your data travels with you, securely.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRICING ==================== -->
+    <section class="section section-alt" id="pricing">
+        <div class="section-label">Pricing</div>
+        <h2 class="section-title">Free Forever. Seriously.</h2>
+        <p class="section-subtitle">All features included. No hidden fees. No premium tiers. Just a great billing tool.</p>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3 style="font-size:20px; font-weight:700;">Retailer</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">For individual store owners</p>
+                <div class="price">₹0<span>/forever</span></div>
+                <ul class="pricing-features">
+                    <li>Unlimited invoices</li>
+                    <li>Manual GST control</li>
+                    <li>Invoice ledger & filters</li>
+                    <li>Print & share invoices</li>
+                    <li>Store logo & branding</li>
+                    <li>Export/Import data</li>
+                </ul>
+                <a href="login.html?mode=register" class="btn-cta btn-cta-outline" style="width:100%; justify-content:center;">Get Started</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="popular-badge">⭐ Most Popular</div>
+                <h3 style="font-size:20px; font-weight:700;">Admin</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">For business owners & managers</p>
+                <div class="price">₹0<span>/forever</span></div>
+                <ul class="pricing-features">
+                    <li>Everything in Retailer</li>
+                    <li>Approve / reject users</li>
+                    <li>Admin dashboard</li>
+                    <li>Full user visibility</li>
+                    <li>Manage all accounts</li>
+                    <li>Priority support</li>
+                </ul>
+                <a href="login.html" class="btn-cta btn-cta-primary" style="width:100%; justify-content:center;">Login as Admin</a>
+            </div>
+            <div class="pricing-card">
+                <h3 style="font-size:20px; font-weight:700;">Enterprise</h3>
+                <p style="color:var(--text-secondary); font-size:14px;">For multi‑store chains</p>
+                <div class="price">₹0<span>/forever</span></div>
+                <ul class="pricing-features">
+                    <li>Everything in Admin</li>
+                    <li>Multiple store profiles</li>
+                    <li>Bulk invoice export</li>
+                    <li>Custom branding</li>
+                    <li>Dedicated support</li>
+                    <li>Data migration help</li>
+                </ul>
+                <a href="login.html?mode=register" class="btn-cta btn-cta-outline" style="width:100%; justify-content:center;">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TESTIMONIALS ==================== -->
+    <section class="section" id="testimonials">
+        <div class="section-label">Testimonials</div>
+        <h2 class="section-title">Loved by Retailers</h2>
+        <p class="section-subtitle">Hear from store owners who use POS Retail Pro every day.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="quote">"Finally a billing tool that gives me full GST control. The admin approval feature is perfect for managing my shop staff. I can approve who gets access."</p>
+                <div class="author-row">
+                    <div class="avatar">R</div>
+                    <div>
+                        <div class="author-name">Rajesh Kumar</div>
+                        <div class="author-role">Kirana Store Owner, Mumbai</div>
                     </div>
-
-                    <!-- 🔍 Month/Year Filter -->
-                    <div class="filter-row">
-                        <label>🔍 Filter:</label>
-                        <select id="filterMonth" onchange="applyInvoiceFilter()">
-                            <option value="all">All Months</option>
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                        <select id="filterYear" onchange="applyInvoiceFilter()">
-                            <option value="all">All Years</option>
-                        </select>
-                        <button class="btn btn-secondary btn-sm" onclick="resetInvoiceFilter()">🔄 Reset Filter</button>
-                        <span style="font-size:12px; color:var(--text-muted); margin-left:auto;" id="filteredCountLabel">Showing all invoices</span>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="quote">"I exported my account from my laptop and imported it on my mobile in seconds. Everything worked perfectly. Cross‑device sync is a game changer."</p>
+                <div class="author-row">
+                    <div class="avatar">P</div>
+                    <div>
+                        <div class="author-name">Priya Sharma</div>
+                        <div class="author-role">Boutique Owner, Bangalore</div>
                     </div>
-
-                    <!-- 💰 Total Amount Summary -->
-                    <div class="total-summary-card" id="totalSummaryCard">
-                        <div>
-                            <div class="total-label">💰 Total Invoice Amount</div>
-                            <div class="invoice-count" id="totalInvoiceCount">0 invoices</div>
-                        </div>
-                        <div class="total-amount" id="totalFilteredAmount">₹0.00</div>
-                    </div>
-
-                    <div class="table-wrapper">
-                        <table class="invoice-table">
-                            <thead>
-                                <tr><th>Invoice #</th><th>Date</th><th>Store Name</th><th>Status</th><th style="text-align:right;">Total</th><th style="text-align:center;">Actions</th></tr>
-                            </thead>
-                            <tbody id="reportTableBody"></tbody>
-                        </table>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p class="quote">"The manual GST input saved us from expensive accounting software. Simple interface, powerful features, and it's completely free. Highly recommended."</p>
+                <div class="author-row">
+                    <div class="avatar">A</div>
+                    <div>
+                        <div class="author-name">Anil Verma</div>
+                        <div class="author-role">Supermarket Owner, Delhi</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- ==================== FAQ ==================== -->
+    <section class="section section-alt" id="faq">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Quick answers to common questions about POS Retail Pro.</p>
+        <div class="faq-container">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>Is POS Retail Pro really free? <span class="icon">+</span></h4>
+                <div class="answer">Yes, absolutely! POS Retail Pro is 100% free with all features included. There are no hidden fees, premium tiers, or payment walls. We built this for Indian retailers who need a simple, powerful billing tool.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>How does admin approval work? <span class="icon">+</span></h4>
+                <div class="answer">When a new user registers, their account is marked as "pending." The admin (you or a manager) reviews the request and clicks "Approve" or "Reject" from the admin dashboard. Only approved users can log in and create invoices.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>Can I use it on multiple devices? <span class="icon">+</span></h4>
+                <div class="answer">Yes! Use the Export button on your dashboard to download your full account data. Then on any other device, use the "Restore from Backup" option on the login page to import everything — your account, invoices, and settings.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>Where is my data stored? <span class="icon">+</span></h4>
+                <div class="answer">All data is stored locally in your browser's localStorage. There is no server, no cloud storage, and no third‑party access. Your business data stays completely private and under your control at all times.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <h4>Can I customize the GST percentages? <span class="icon">+</span></h4>
+                <div class="answer">Absolutely. You set CGST, SGST, and Cess percentages manually for every invoice. This gives you complete flexibility to handle different product categories and tax rates as per Indian GST regulations.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CTA BANNER ==================== -->
+    <section class="cta-banner">
+        <h2>Ready to Transform Your Billing?</h2>
+        <p>Join 500+ retailers already using POS Retail Pro for their daily invoicing. Free forever, no catch.</p>
+        <a href="login.html?mode=register" class="btn-cta btn-cta-primary">🚀 Create Your Free Account →</a>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h5>POS Retail Pro</h5>
+                <a>Smart billing for Indian retailers</a>
+                <a>Admin: ANIV6536</a>
+                <a>anilsouth65@gmail.com</a>
+            </div>
+            <div class="footer-col">
+                <h5>Features</h5>
+                <a href="#features">GST Billing</a>
+                <a href="#features">Admin Approval</a>
+                <a href="#features">Cross‑Device Sync</a>
+                <a href="#features">Invoice Ledger</a>
+            </div>
+            <div class="footer-col">
+                <h5>Resources</h5>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#faq">FAQ</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#testimonials">Testimonials</a>
+            </div>
+            <div class="footer-col">
+                <h5>Support & Legal</h5>
+                <a href="documentation.html">Documentation</a>
+                <a href="contact.html">Contact Admin</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 POS Retail Pro. All rights reserved. Built with ❤️ for Indian Retailers. | Data stored locally in your browser.
+        </div>
+    </footer>
 
     <script>
-        // ======================== USER MANAGEMENT WITH APPROVAL ========================
-        let currentUser = null;
-        let currentFilterMonth = 'all';
-        let currentFilterYear = 'all';
+        function toggleFaq(item) {
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        }
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.feature-card, .step-card, .pricing-card, .testimonial-card, .faq-item').forEach(el => {
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
 
-        // ADMIN CREDENTIALS as specified: username ANIV6536, password ANIV6536
-        const ADMIN_USERNAME = "ANIV6536";
-        const ADMIN_PASSWORD = "ANIV6536";
-        const ADMIN_EMAIL = "anilsouth65@gmail.com";
-
-        function getUsers() { return JSON.parse(localStorage.getItem('pos_users_approved')) || []; }
-
-        function saveUsers(users) { localStorage.setItem('pos_users_approved', JSON.stringify(users)); }
-
-        function getUserInvoices() { return JSON.parse(localStorage.getItem(`pos_invoices_${currentUser?.id}`)) || []; }
-
-        function saveUserInvoices(invoices) { localStorage.setItem(`pos_invoices_${currentUser?.id}`,
-                JSON.stringify(invoices)); }
-
-        // Initialize default admin account if not exists
-        function initAdminAccount() {
-            let users = getUsers();
-            const adminExists = users.find(u => u.username === ADMIN_USERNAME || u.email === ADMIN_EMAIL);
-            if (!adminExists) {
-                users.push({
-                    id: "admin_001",
-                    name: "Admin",
-                    username: ADMIN_USERNAME,
-                    password: ADMIN_PASSWORD,
-                    email: ADMIN_EMAIL,
-                    status: 'approved',
-                    isAdmin: true,
-                    createdAt: new Date().toISOString()
+        // --- LIVE STATS UPDATER ---
+        (function updateStats() {
+            try {
+                const users = JSON.parse(localStorage.getItem('pos_users_approved') || '[]');
+                let totalInvoices = 0;
+                users.forEach(user => {
+                    const invoices = JSON.parse(localStorage.getItem(`pos_invoices_${user.id}`) || '[]');
+                    totalInvoices += invoices.length;
                 });
-                saveUsers(users);
+                const approvedUsers = users.filter(u => u.status === 'approved').length;
+                document.getElementById('statInvoices').textContent = totalInvoices.toLocaleString('en-IN') + '+';
+                document.getElementById('statStores').textContent = approvedUsers.toLocaleString('en-IN') + '+';
+                // Static values
+                document.getElementById('statUptime').textContent = '99.9%';
+                document.getElementById('statAccess').textContent = '24/7';
+            } catch (e) {
+                // If localStorage is corrupted, show fallback
+                document.getElementById('statInvoices').textContent = '10,000+';
+                document.getElementById('statStores').textContent = '500+';
             }
-        }
-
-        // Store pending requests and notify admin via in-app notification
-        function notifyAdmin(newUserName, newUserEmail, userId, userUsername) {
-            let pendingRequests = JSON.parse(localStorage.getItem('admin_pending_requests')) || [];
-            if (!pendingRequests.find(r => r.userId === userId)) {
-                pendingRequests.push({
-                    userId,
-                    name: newUserName,
-                    email: newUserEmail,
-                    username: userUsername,
-                    status: 'pending',
-                    requestedAt: Date.now()
-                });
-                localStorage.setItem('admin_pending_requests', JSON.stringify(pendingRequests));
-            }
-            console.log(`New registration request from ${newUserName} (${newUserEmail})`);
-
-            if (currentUser && currentUser.isAdmin) {
-                renderAdminPanel();
-                showInAppNotification(`📢 New registration request from ${newUserName}!`);
-            }
-        }
-
-        function showInAppNotification(message) {
-            const container = document.getElementById('adminPanelContainer');
-            if (container) {
-                const notifDiv = document.createElement('div');
-                notifDiv.className = 'notification-banner blink';
-                notifDiv.innerHTML =
-                    `🔔 ${message} <button style="margin-left:auto; background:none; border:none; cursor:pointer;" onclick="this.parentElement.remove()">✕</button>`;
-                container.insertBefore(notifDiv, container.firstChild);
-                setTimeout(() => { if (notifDiv) notifDiv.remove(); }, 8000);
-            } else {
-                alert(`🔔 ${message}`);
-            }
-        }
-
-        let authMode = 'login';
-
-        function renderAuth() {
-            const container = document.getElementById('authCard');
-            if (authMode === 'login') {
-                container.innerHTML = `
-                <div class="auth-icon">🔐</div>
-                <h2>Welcome Back</h2>
-                <p>Sign in to your POS dashboard</p>
-                <div class="input-group"><label>Username or Email</label><input type="text" id="loginUsername" placeholder="Username or email@example.com"></div>
-                <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••"></div>
-                <div class="checkbox-row"><input type="checkbox" id="rememberMe"> <label>Remember me</label></div>
-                <button class="auth-btn" onclick="handleLogin()">Login →</button>
-                <div class="toggle-auth" onclick="setAuthMode('register')">✨ Create new account</div>
-                <div class="forgot-link" onclick="setAuthMode('forgot')">Forgot password? Contact admin</div>
-                <hr class="divider">
-                <div style="text-align:center; margin-top:8px;">
-                    <span style="font-size:12px; color:var(--text-muted);">📱 New device?</span>
-                    <span class="toggle-auth" style="font-size:12px; display:inline; margin-left:4px;" onclick="triggerImportAccountDataOnLogin()">Restore Account Data</span>
-                </div>
-                <input type="file" id="importAccountFileInputLogin" accept=".json" style="display:none" onchange="importFullAccountDataFromLogin(event)">
-                <div id="authMsg"></div>
-            `;
-            } else if (authMode === 'register') {
-                container.innerHTML = `
-                <div class="auth-icon">📝</div>
-                <h2>Create Account</h2>
-                <p>Request access - Admin will approve</p>
-                <div class="input-group"><label>Full Name</label><input type="text" id="regName" placeholder="John Retailer"></div>
-                <div class="input-group"><label>Username</label><input type="text" id="regUsername" placeholder="Choose username"></div>
-                <div class="input-group"><label>Email</label><input type="email" id="regEmail" placeholder="email@example.com"></div>
-                <div class="input-group"><label>Password</label><input type="password" id="regPassword" placeholder="Minimum 6 characters"></div>
-                <div class="input-group"><label>Confirm Password</label><input type="password" id="regConfirm" placeholder="Re-enter password"></div>
-                <button class="auth-btn" onclick="handleRegister()">Request Registration →</button>
-                <div class="toggle-auth" onclick="setAuthMode('login')">← Back to Login</div>
-                <div id="authMsg"></div>
-            `;
-            } else if (authMode === 'forgot') {
-                container.innerHTML =
-                    `<div class="auth-icon">🔑</div><h2>Reset Password</h2><p>Contact admin at anilsouth65@gmail.com to reset your password</p><div class="toggle-auth" onclick="setAuthMode('login')">← Back to Login</div><div id="authMsg"></div>`;
-            }
-        }
-
-        function setAuthMode(mode) { authMode = mode;
-            renderAuth(); }
-
-        function showAuthMsg(msg, isError = true) { const div = document.getElementById('authMsg'); if (div) div.innerHTML =
-                `<div class="${isError ? 'error-msg' : 'success-msg'}">${msg}</div>`; setTimeout(() => { if (div) div
-                    .innerHTML = ''; }, 4000); }
-
-        function handleLogin() {
-            const loginInput = document.getElementById('loginUsername')?.value.trim();
-            const pwd = document.getElementById('loginPassword')?.value;
-            if (!loginInput || !pwd) return showAuthMsg('Please enter username/email and password');
-
-            const users = getUsers();
-            let user = users.find(u => (u.username === loginInput || u.email === loginInput) && u.password === pwd);
-
-            if (!user) return showAuthMsg('Invalid credentials. Please check username/email and password.');
-            if (user.status !== 'approved') return showAuthMsg(
-                'Your account is pending admin approval. Wait for admin to approve.');
-
-            currentUser = {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                username: user.username,
-                isAdmin: user.username === ADMIN_USERNAME || user.email === ADMIN_EMAIL
-            };
-
-            document.getElementById('authOverlay').style.display = 'none';
-            document.getElementById('appWrapper').style.display = 'flex';
-            document.getElementById('userGreeting').innerHTML =
-                `👋 ${user.name} | ${currentUser.isAdmin ? 'Administrator' : 'Retail POS'}`;
-
-            const adminBtn = document.getElementById('adminPanelBtn');
-            if (currentUser.isAdmin) adminBtn.style.display = 'inline-block';
-            else adminBtn.style.display = 'none';
-
-            loadUserData();
-            initPOS();
-            if (currentUser.isAdmin) renderAdminPanel();
-
-            const remember = document.getElementById('rememberMe')?.checked;
-            if (remember) localStorage.setItem('pos_remembered', JSON.stringify({ loginInput, pwd }));
-            else localStorage.removeItem('pos_remembered');
-        }
-
-        function handleRegister() {
-            const name = document.getElementById('regName')?.value.trim();
-            const username = document.getElementById('regUsername')?.value.trim();
-            const email = document.getElementById('regEmail')?.value.trim();
-            const pwd = document.getElementById('regPassword')?.value;
-            const confirm = document.getElementById('regConfirm')?.value;
-
-            if (!name || !username || !email || !pwd) return showAuthMsg('All fields required');
-            if (pwd.length < 6) return showAuthMsg('Password must be at least 6 characters');
-            if (pwd !== confirm) return showAuthMsg('Passwords do not match');
-
-            const users = getUsers();
-            if (users.find(u => u.username === username)) return showAuthMsg('Username already taken');
-            if (users.find(u => u.email === email)) return showAuthMsg('Email already registered');
-
-            const newUser = {
-                id: Date.now().toString(),
-                name,
-                username,
-                email,
-                password: pwd,
-                status: 'pending',
-                isAdmin: false,
-                createdAt: new Date().toISOString()
-            };
-            users.push(newUser);
-            saveUsers(users);
-
-            showAuthMsg('Registration request sent! Admin will review and approve. You can login from any device once approved.',
-                false);
-            notifyAdmin(name, email, newUser.id, username);
-            setAuthMode('login');
-        }
-
-        // Admin functions: Approve / Reject
-        function approveUser(userId) {
-            let users = getUsers();
-            const userIndex = users.findIndex(u => u.id === userId);
-            if (userIndex !== -1 && users[userIndex].status === 'pending') {
-                users[userIndex].status = 'approved';
-                saveUsers(users);
-
-                let pendingRequests = JSON.parse(localStorage.getItem('admin_pending_requests')) || [];
-                pendingRequests = pendingRequests.filter(r => r.userId !== userId);
-                localStorage.setItem('admin_pending_requests', JSON.stringify(pendingRequests));
-
-                renderAdminPanel();
-                alert(`✅ User ${users[userIndex].name} has been APPROVED. They can now login from any device.`);
-                showInAppNotification(`✅ Approved: ${users[userIndex].name}`);
-            }
-        }
-
-        function rejectUser(userId) {
-            let users = getUsers();
-            const userIndex = users.findIndex(u => u.id === userId);
-            if (userIndex !== -1 && users[userIndex].status === 'pending') {
-                const userName = users[userIndex].name;
-                users = users.filter(u => u.id !== userId);
-                saveUsers(users);
-
-                let pendingRequests = JSON.parse(localStorage.getItem('admin_pending_requests')) || [];
-                pendingRequests = pendingRequests.filter(r => r.userId !== userId);
-                localStorage.setItem('admin_pending_requests', JSON.stringify(pendingRequests));
-
-                renderAdminPanel();
-                alert(`❌ User ${userName} has been REJECTED and removed.`);
-                showInAppNotification(`❌ Rejected: ${userName}`);
-            }
-        }
-
-        function renderAdminPanel() {
-            if (!currentUser || !currentUser.isAdmin) return;
-
-            const users = getUsers();
-            const pendingUsers = users.filter(u => u.status === 'pending' && !u.isAdmin);
-            const approvedUsers = users.filter(u => u.status === 'approved' && !u.isAdmin);
-
-            const container = document.getElementById('adminPanelContainer');
-            if (!container) return;
-
-            container.style.display = 'block';
-            container.innerHTML = `
-            <div class="admin-panel">
-                <div class="admin-header">
-                    <span>👑 Admin Approval Dashboard (ANIV6536)</span>
-                    <span class="pending-badge">${pendingUsers.length} Pending</span>
-                </div>
-                ${pendingUsers.length === 0 ?
-                    '<div style="padding:30px; text-align:center; color: #64748b;">✅ No pending registrations. All users are approved.</div>' :
-                    pendingUsers.map(user => `
-                        <div class="user-row">
-                            <div class="user-info">
-                                <strong>${escapeHtml(user.name)}</strong>
-                                <small>Username: ${escapeHtml(user.username)} | Email: ${escapeHtml(user.email)}</small>
-                            </div>
-                            <div>
-                                <button class="approve-btn" onclick="approveUser('${user.id}')">✅ Approve</button>
-                                <button class="reject-btn" onclick="rejectUser('${user.id}')">❌ Reject</button>
-                            </div>
-                        </div>
-                    `).join('')
-                }
-                ${approvedUsers.length > 0 ? `
-                    <div style="padding: 12px 24px; background: #f1f5f9; border-top: 1px solid var(--border);">
-                        <details>
-                            <summary style="font-weight: 600; cursor: pointer;">📋 Approved Users (${approvedUsers.length})</summary>
-                            <div style="margin-top: 10px;">
-                                ${approvedUsers.map(user => `<div style="padding: 5px 0;">• ${escapeHtml(user.name)} (${escapeHtml(user.username)})</div>`).join('')}
-                            </div>
-                        </details>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-        }
-
-        function toggleAdminPanel() {
-            const panel = document.getElementById('adminPanelContainer');
-            if (panel) panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function logoutUser() {
-            currentUser = null;
-            localStorage.removeItem('pos_remembered');
-            document.getElementById('authOverlay').style.display = 'flex';
-            document.getElementById('appWrapper').style.display = 'none';
-            setAuthMode('login');
-            const adminPanel = document.getElementById('adminPanelContainer');
-            if (adminPanel) adminPanel.style.display = 'none';
-            currentFilterMonth = 'all';
-            currentFilterYear = 'all';
-        }
-
-        function loadUserData() {
-            if (!currentUser) return;
-            const savedShop = localStorage.getItem(`shop_details_${currentUser.id}`);
-            if (savedShop) {
-                const shop = JSON.parse(savedShop);
-                document.getElementById('shopName').value = shop.name || '';
-                document.getElementById('shopAddress').value = shop.address || '';
-                document.getElementById('shopContact').value = shop.contact || '';
-                if (shop.logo) {
-                    document.getElementById('storeLogoPreview').src = shop.logo;
-                    document.getElementById('storeLogoPreview').style.display = 'block';
-                    document.getElementById('logoPlaceholder').style.display = 'none';
-                }
-            }
-            populateYearFilter();
-            applyInvoiceFilter();
-        }
-
-        function saveShopDetails() {
-            if (!currentUser) return;
-            const shopData = {
-                name: document.getElementById('shopName').value,
-                address: document.getElementById('shopAddress').value,
-                contact: document.getElementById('shopContact').value,
-                logo: document.getElementById('storeLogoPreview').src || ''
-            };
-            localStorage.setItem(`shop_details_${currentUser.id}`, JSON.stringify(shopData));
-        }
-
-        function newInvoiceToken() {
-            const date = new Date();
-            const token =
-                `INV-${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}-${Math.floor(Math.random()*10000)}`;
-            document.getElementById('invoiceId').value = token;
-        }
-
-        function addRow() {
-            const tbody = document.getElementById('itemsTableBody');
-            const row = document.createElement('tr');
-            row.innerHTML =
-                `<td><input type="text" placeholder="Item description" class="item-desc"></td><td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td><td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td><td class="item-amount" style="font-weight:600;">0.00</td><td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>`;
-            tbody.appendChild(row);
-            calculateTotal();
-        }
-
-        function deleteRow(btn) { btn.closest('tr').remove();
-            calculateTotal(); }
-
-        function calculateTotal() {
-            let subtotal = 0;
-            document.querySelectorAll('#itemsTableBody tr').forEach(row => {
-                const qty = parseFloat(row.querySelector('.item-qty')?.value) || 0;
-                const rate = parseFloat(row.querySelector('.item-rate')?.value) || 0;
-                const amount = qty * rate;
-                const amountCell = row.querySelector('.item-amount');
-                if (amountCell) amountCell.innerText = amount.toFixed(2);
-                subtotal += amount;
-            });
-            let cgstPercent = parseFloat(document.getElementById('cgstPercent').value) || 0;
-            let sgstPercent = parseFloat(document.getElementById('sgstPercent').value) || 0;
-            let cessPercent = parseFloat(document.getElementById('cessPercent').value) || 0;
-            document.getElementById('cgstPercentDisplay').innerText = cgstPercent;
-            document.getElementById('sgstPercentDisplay').innerText = sgstPercent;
-            document.getElementById('cessPercentDisplay').innerText = cessPercent;
-            const cgst = subtotal * (cgstPercent / 100);
-            const sgst = subtotal * (sgstPercent / 100);
-            const cess = subtotal * (cessPercent / 100);
-            const grand = subtotal + cgst + sgst + cess;
-            document.getElementById('subtotalVal').innerHTML = `₹${subtotal.toFixed(2)}`;
-            document.getElementById('cgstVal').innerHTML = `₹${cgst.toFixed(2)}`;
-            document.getElementById('sgstVal').innerHTML = `₹${sgst.toFixed(2)}`;
-            const cessRow = document.getElementById('cessRow');
-            if (cessPercent !== 0) {
-                cessRow.style.display = 'flex';
-                document.getElementById('cessVal').innerHTML = `₹${cess.toFixed(2)}`;
-            } else {
-                cessRow.style.display = 'none';
-            }
-            document.getElementById('grandTotalVal').innerHTML = `₹${grand.toFixed(2)}`;
-        }
-
-        function saveCurrentInvoice() {
-            if (!currentUser) return;
-            saveShopDetails();
-            const items = [];
-            document.querySelectorAll('#itemsTableBody tr').forEach(row => {
-                const desc = row.querySelector('.item-desc')?.value || '';
-                const qty = row.querySelector('.item-qty')?.value || 0;
-                const rate = row.querySelector('.item-rate')?.value || 0;
-                if (desc) items.push({ desc, qty, rate, amount: (qty * rate).toFixed(2) });
-            });
-            const invoice = {
-                id: document.getElementById('invoiceId').value,
-                date: document.getElementById('invoiceDate').value,
-                status: document.getElementById('invoiceStatus').value,
-                shopName: document.getElementById('shopName').value || "My Store",
-                items,
-                subtotal: document.getElementById('subtotalVal').innerHTML,
-                cgstPercent: document.getElementById('cgstPercent').value,
-                sgstPercent: document.getElementById('sgstPercent').value,
-                cessPercent: document.getElementById('cessPercent').value,
-                grandTotal: document.getElementById('grandTotalVal').innerHTML,
-                timestamp: Date.now()
-            };
-            let invoices = getUserInvoices();
-            const existingIndex = invoices.findIndex(i => i.id === invoice.id);
-            if (existingIndex > -1) invoices[existingIndex] = invoice;
-            else invoices.unshift(invoice);
-            saveUserInvoices(invoices);
-            populateYearFilter();
-            applyInvoiceFilter();
-            alert(`Invoice ${invoice.id} saved!`);
-            newInvoiceToken();
-            resetForm();
-        }
-
-        function resetForm() {
-            const tbody = document.getElementById('itemsTableBody');
-            tbody.innerHTML =
-                `<tr><td><input type="text" placeholder="Item description" class="item-desc"></td><td><input type="number" value="1" class="item-qty" oninput="calculateTotal()"></td><td><input type="number" value="0" class="item-rate" oninput="calculateTotal()"></td><td class="item-amount">0.00</td><td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td></tr>`;
-            calculateTotal();
-        }
-
-        function editInvoice(invoiceId) {
-            const invoices = getUserInvoices();
-            const inv = invoices.find(i => i.id === invoiceId);
-            if (!inv) return;
-            document.getElementById('invoiceId').value = inv.id;
-            document.getElementById('invoiceDate').value = inv.date;
-            document.getElementById('invoiceStatus').value = inv.status;
-            document.getElementById('shopName').value = inv.shopName;
-            if (inv.cgstPercent) document.getElementById('cgstPercent').value = inv.cgstPercent;
-            if (inv.sgstPercent) document.getElementById('sgstPercent').value = inv.sgstPercent;
-            if (inv.cessPercent) document.getElementById('cessPercent').value = inv.cessPercent;
-            const tbody = document.getElementById('itemsTableBody');
-            tbody.innerHTML = '';
-            inv.items.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML =
-                    `<td><input type="text" value="${escapeHtml(item.desc)}" class="item-desc"></td><td><input type="number" value="${item.qty}" class="item-qty" oninput="calculateTotal()"></td><td><input type="number" value="${item.rate}" class="item-rate" oninput="calculateTotal()"></td><td class="item-amount">${item.amount}</td><td><button class="btn btn-danger" style="padding:4px 8px;" onclick="deleteRow(this)">✕</button></td>`;
-                tbody.appendChild(row);
-            });
-            calculateTotal();
-        }
-
-        function deleteInvoice(invoiceId) {
-            if (confirm(`Delete ${invoiceId}?`)) {
-                let invoices = getUserInvoices();
-                invoices = invoices.filter(i => i.id !== invoiceId);
-                saveUserInvoices(invoices);
-                populateYearFilter();
-                applyInvoiceFilter();
-            }
-        }
-
-        // ======================== FILTER FUNCTIONS ========================
-        function getFilteredInvoices() {
-            const invoices = getUserInvoices();
-            if (currentFilterMonth === 'all' && currentFilterYear === 'all') return invoices;
-            return invoices.filter(inv => {
-                if (!inv.date) return false;
-                const parts = inv.date.split('-');
-                if (parts.length < 2) return false;
-                const invYear = parts[0];
-                const invMonth = parts[1];
-                let match = true;
-                if (currentFilterYear !== 'all') match = match && (invYear === currentFilterYear);
-                if (currentFilterMonth !== 'all') match = match && (invMonth === currentFilterMonth);
-                return match;
-            });
-        }
-
-        function applyInvoiceFilter() {
-            currentFilterMonth = document.getElementById('filterMonth')?.value || 'all';
-            currentFilterYear = document.getElementById('filterYear')?.value || 'all';
-            renderReportTable();
-            updateTotalSummary();
-        }
-
-        function resetInvoiceFilter() {
-            document.getElementById('filterMonth').value = 'all';
-            document.getElementById('filterYear').value = 'all';
-            currentFilterMonth = 'all';
-            currentFilterYear = 'all';
-            renderReportTable();
-            updateTotalSummary();
-        }
-
-        function populateYearFilter() {
-            const invoices = getUserInvoices();
-            const yearSelect = document.getElementById('filterYear');
-            if (!yearSelect) return;
-            const years = new Set();
-            invoices.forEach(inv => {
-                if (inv.date) {
-                    const year = inv.date.split('-')[0];
-                    if (year) years.add(year);
-                }
-            });
-            const currentVal = yearSelect.value;
-            yearSelect.innerHTML = '<option value="all">All Years</option>';
-            [...years].sort().reverse().forEach(y => {
-                yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
-            });
-            yearSelect.value = currentVal || 'all';
-            document.getElementById('filteredCountLabel').innerText =
-                (currentFilterMonth === 'all' && currentFilterYear === 'all') ? 'Showing all invoices' :
-                `Filtered: ${currentFilterMonth !== 'all' ? getMonthName(currentFilterMonth) : ''} ${currentFilterYear !== 'all' ? currentFilterYear : ''}`;
-        }
-
-        function getMonthName(monthNum) {
-            const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
-                'October', 'November', 'December'
-            ];
-            return months[parseInt(monthNum)] || '';
-        }
-
-        function updateTotalSummary() {
-            const filtered = getFilteredInvoices();
-            let totalAmount = 0;
-            filtered.forEach(inv => {
-                const gt = inv.grandTotal || '₹0.00';
-                const num = parseFloat(gt.replace(/[₹,\s]/g, '')) || 0;
-                totalAmount += num;
-            });
-            document.getElementById('totalFilteredAmount').innerHTML = `₹${totalAmount.toFixed(2)}`;
-            document.getElementById('totalInvoiceCount').innerHTML =
-                `${filtered.length} invoice${filtered.length !== 1 ? 's' : ''}`;
-            document.getElementById('filteredCountLabel').innerText =
-                (currentFilterMonth === 'all' && currentFilterYear === 'all') ?
-                `Showing all ${filtered.length} invoices` :
-                `Filtered: ${currentFilterMonth !== 'all' ? getMonthName(currentFilterMonth) : ''} ${currentFilterYear !== 'all' ? currentFilterYear : ''} · ${filtered.length} invoice${filtered.length !== 1 ? 's' : ''}`;
-        }
-
-        function renderReportTable() {
-            const tbody = document.getElementById('reportTableBody');
-            const invoices = getFilteredInvoices();
-            if (invoices.length === 0) {
-                tbody.innerHTML =
-                    `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">📭 No invoices found${(currentFilterMonth !== 'all' || currentFilterYear !== 'all') ? ' for this filter' : ''}. Create your first invoice!</td></tr>`;
-                updateTotalSummary();
-                return;
-            }
-            tbody.innerHTML = '';
-            invoices.forEach(inv => {
-                let badgeClass = inv.status === 'Paid' ? 'badge-paid' : (inv.status === 'Pending' ?
-                    'badge-pending' : 'badge-draft');
-                const row = document.createElement('tr');
-                row.innerHTML =
-                    `<td style="font-weight:600;">${escapeHtml(inv.id)}</td><td>${escapeHtml(inv.date || '')}</td><td>${escapeHtml(inv.shopName || '')}</td><td><span class="badge ${badgeClass}">${escapeHtml(inv.status)}</span></td><td style="text-align:right; font-weight:600;">${inv.grandTotal || '₹0.00'}</td><td style="text-align:center;"><button class="btn btn-sm" style="background:#eff6ff; padding:5px 10px;" onclick="editInvoice('${escapeHtml(inv.id)}')">✏️ Edit</button> <button class="btn btn-sm" style="background:#fff1f2; padding:5px 10px;" onclick="deleteInvoice('${escapeHtml(inv.id)}')">🗑️ Del</button></td>`;
-                tbody.appendChild(row);
-            });
-            updateTotalSummary();
-        }
-
-        // ======================== EXPORT / IMPORT FUNCTIONS ========================
-
-        // Export invoices only (JSON)
-        function exportInvoicesToJSON() {
-            if (!currentUser) return;
-            const invoices = getUserInvoices();
-            if (invoices.length === 0) {
-                alert('No invoices to export.');
-                return;
-            }
-            const exportData = {
-                exportedBy: currentUser.username,
-                exportedAt: new Date().toISOString(),
-                userId: currentUser.id,
-                invoiceCount: invoices.length,
-                invoices: invoices
-            };
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download =
-                `pos_invoices_${currentUser.username}_${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showInAppNotification(`📤 Exported ${invoices.length} invoices successfully!`);
-        }
-
-        // Trigger file input for importing invoices
-        function triggerImportInvoices() {
-            document.getElementById('importInvoicesFileInput').click();
-        }
-
-        // Import invoices from JSON (merges with existing)
-        function importInvoicesFromJSON(event) {
-            if (!currentUser) return;
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.invoices || !Array.isArray(data.invoices)) {
-                        alert('Invalid invoice file format. Please select a valid POS invoice export file.');
-                        return;
-                    }
-                    let existingInvoices = getUserInvoices();
-                    let addedCount = 0;
-                    let updatedCount = 0;
-                    data.invoices.forEach(importedInv => {
-                        const existingIndex = existingInvoices.findIndex(i => i.id === importedInv.id);
-                        if (existingIndex > -1) {
-                            if (confirm(
-                                    `Invoice ${importedInv.id} already exists. Overwrite with imported version?`
-                                    )) {
-                                existingInvoices[existingIndex] = importedInv;
-                                updatedCount++;
-                            }
-                        } else {
-                            existingInvoices.unshift(importedInv);
-                            addedCount++;
-                        }
-                    });
-                    saveUserInvoices(existingInvoices);
-                    populateYearFilter();
-                    applyInvoiceFilter();
-                    alert(
-                        `✅ Import complete!\n📥 ${addedCount} new invoices added\n🔄 ${updatedCount} invoices updated\n📋 Total: ${existingInvoices.length} invoices`
-                        );
-                    showInAppNotification(
-                        `📥 Imported: ${addedCount} new, ${updatedCount} updated invoices`);
-                } catch (err) {
-                    alert('❌ Error reading file. Please ensure it is a valid JSON file.');
-                    console.error(err);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        // Export FULL account data (for cross-device migration)
-        function exportFullAccountData() {
-            if (!currentUser) return;
-            const users = getUsers();
-            const userData = users.find(u => u.id === currentUser.id);
-            const shopData = localStorage.getItem(`shop_details_${currentUser.id}`);
-            const invoices = getUserInvoices();
-            const exportPackage = {
-                appName: 'POS Retail Pro',
-                version: '2.0',
-                exportedAt: new Date().toISOString(),
-                account: {
-                    id: userData?.id,
-                    name: userData?.name,
-                    username: userData?.username,
-                    email: userData?.email,
-                    password: userData?.password,
-                    status: userData?.status,
-                    isAdmin: userData?.isAdmin,
-                    createdAt: userData?.createdAt
-                },
-                shopDetails: shopData ? JSON.parse(shopData) : null,
-                invoices: invoices,
-                invoiceCount: invoices.length
-            };
-            const blob = new Blob([JSON.stringify(exportPackage, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download =
-                `pos_full_backup_${currentUser.username}_${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            alert(
-                `📦 Full account data exported!\n\n👤 Account: ${currentUser.username}\n📋 Invoices: ${invoices.length}\n📱 You can now import this file on another device or mobile to restore your account.\n\n⚠️ Keep this file safe! It contains your login credentials.`
-                );
-            showInAppNotification(`📦 Full account data exported! Use this file to restore on another device.`);
-        }
-
-        // Trigger file input for importing account data (from main app)
-        function triggerImportAccountData() {
-            document.getElementById('importAccountFileInput').click();
-        }
-
-        // Trigger file input for importing account data (from login screen)
-        function triggerImportAccountDataOnLogin() {
-            document.getElementById('importAccountFileInputLogin').click();
-        }
-
-        // Import full account data (from main app)
-        function importFullAccountData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.account || !data.account.username || !data.account.password) {
-                        alert(
-                            '❌ Invalid backup file. This file does not contain valid account data. Please use a POS Retail Pro backup file.'
-                            );
-                        return;
-                    }
-                    processAccountImport(data);
-                } catch (err) {
-                    alert('❌ Error reading file. Please ensure it is a valid POS Retail Pro backup file.');
-                    console.error(err);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        // Import full account data (from login screen)
-        function importFullAccountDataFromLogin(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.account || !data.account.username || !data.account.password) {
-                        showAuthMsg(
-                            '❌ Invalid backup file. Please use a POS Retail Pro backup file.',
-                            true);
-                        return;
-                    }
-                    const success = processAccountImportFromLogin(data);
-                    if (success) {
-                        showAuthMsg(
-                            '✅ Account restored! You can now login with your credentials.',
-                            false);
-                    }
-                } catch (err) {
-                    showAuthMsg('❌ Error reading file. Please ensure it is a valid JSON file.',
-                    true);
-                    console.error(err);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        function processAccountImport(data) {
-            let users = getUsers();
-            const existingIndex = users.findIndex(u => u.id === data.account.id || u.username === data.account
-                .username || u.email === data.account.email);
-            if (existingIndex > -1) {
-                if (!confirm(
-                        `Account "${data.account.username}" already exists in this browser. Overwrite with imported data?\n\nThis will update the account and merge invoices.`
-                        )) return;
-                users[existingIndex] = { ...users[existingIndex], ...data.account };
-            } else {
-                users.push(data.account);
-            }
-            saveUsers(users);
-
-            if (data.shopDetails && currentUser) {
-                localStorage.setItem(`shop_details_${data.account.id}`, JSON.stringify(data.shopDetails));
-            }
-
-            if (data.invoices && Array.isArray(data.invoices) && currentUser) {
-                let existingInvoices = getUserInvoices();
-                let addedCount = 0;
-                data.invoices.forEach(importedInv => {
-                    const exists = existingInvoices.findIndex(i => i.id === importedInv.id);
-                    if (exists === -1) {
-                        existingInvoices.unshift(importedInv);
-                        addedCount++;
-                    }
-                });
-                saveUserInvoices(existingInvoices);
-                alert(
-                    `✅ Account data imported!\n📋 ${addedCount} new invoices merged.\n🔐 Please re-login for changes to take full effect.`
-                    );
-                showInAppNotification(`📥 Account data imported. Re-login recommended.`);
-            } else {
-                alert('✅ Account data imported! Please re-login for changes to take full effect.');
-            }
-
-            populateYearFilter();
-            applyInvoiceFilter();
-            loadUserData();
-        }
-
-        function processAccountImportFromLogin(data) {
-            let users = getUsers();
-            const existingIndex = users.findIndex(u => u.id === data.account.id || u.username === data.account
-                .username || u.email === data.account.email);
-            if (existingIndex > -1) {
-                users[existingIndex] = { ...users[existingIndex], ...data.account, status: data.account.status ||
-                        'approved' };
-            } else {
-                data.account.status = data.account.status || 'approved';
-                users.push(data.account);
-            }
-            saveUsers(users);
-
-            if (data.shopDetails) {
-                localStorage.setItem(`shop_details_${data.account.id}`, JSON.stringify(data.shopDetails));
-            }
-            if (data.invoices && Array.isArray(data.invoices)) {
-                localStorage.setItem(`pos_invoices_${data.account.id}`, JSON.stringify(data.invoices));
-            }
-            return true;
-        }
-
-        // ======================== OTHER FUNCTIONS ========================
-        function shareBill() {
-            const total = document.getElementById('grandTotalVal').innerText;
-            const invNo = document.getElementById('invoiceId').value;
-            const text = `🧾 Invoice ${invNo}\nTotal: ${total}\nThank you!`;
-            if (navigator.share) navigator.share({ title: 'Invoice', text });
-            else window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
-        }
-
-        function printInvoice() { window.print(); }
-
-        function triggerLogoUpload() { document.getElementById('logoInput').click(); }
-
-        function loadLogo(e) {
-            const reader = new FileReader();
-            reader.onload = ev => {
-                const preview = document.getElementById('storeLogoPreview');
-                const placeholder = document.getElementById('logoPlaceholder');
-                preview.src = ev.target.result;
-                preview.style.display = 'block';
-                placeholder.style.display = 'none';
-                saveShopDetails();
-            };
-            if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-        }
-
-        function initPOS() {
-            document.getElementById('invoiceDate').valueAsDate = new Date();
-            newInvoiceToken();
-            calculateTotal();
-            populateYearFilter();
-            applyInvoiceFilter();
-            if (currentUser && currentUser.isAdmin) renderAdminPanel();
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;'; return m; });
-        }
-
-        // Initialize on page load
-        window.onload = () => {
-            initAdminAccount();
-
-            const remembered = localStorage.getItem('pos_remembered');
-            if (remembered) {
-                const { loginInput, pwd } = JSON.parse(remembered);
-                const users = getUsers();
-                let user = users.find(u => (u.username === loginInput || u.email === loginInput) && u
-                    .password === pwd && u.status === 'approved');
-                if (user) {
-                    currentUser = {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        username: user.username,
-                        isAdmin: user.username === ADMIN_USERNAME || user.email === ADMIN_EMAIL
-                    };
-                    document.getElementById('authOverlay').style.display = 'none';
-                    document.getElementById('appWrapper').style.display = 'flex';
-                    document.getElementById('userGreeting').innerHTML =
-                        `👋 ${user.name} | ${currentUser.isAdmin ? 'Administrator' : 'Retail POS'}`;
-                    if (currentUser.isAdmin) document.getElementById('adminPanelBtn').style.display =
-                        'inline-block';
-                    loadUserData();
-                    initPOS();
-                    return;
-                }
-            }
-            renderAuth();
-            document.getElementById('authOverlay').style.display = 'flex';
-            document.getElementById('appWrapper').style.display = 'none';
-        };
+        })();
     </script>
 </body>
 </html>
